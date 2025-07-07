@@ -1,0 +1,109 @@
+﻿@page
+@model LoginModel
+
+<style>
+    body {
+        background-image: url('/images/spaceView.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }
+    .container {
+        background: transparent !important;
+        padding: 0 !important;
+    }
+    .login-heading {
+        color: #00ffff;
+        text-align: center;
+        font-weight: bold;
+        font-size: 2rem;
+        text-shadow: 0 0 8px #00ffff;
+        margin-bottom: 30px;
+    }
+    .planet-btn {
+        width: 100px;
+        height: 95px;
+        background: radial-gradient(circle at 30% 30%, #00aaff, #003366);
+        border: 3px solid #ffffff;
+        border-radius: 50%;
+        color: white;
+        font-weight: bold;
+        font-size: 1rem;
+        text-align: center;
+        line-height: 95px;
+        cursor: pointer;
+        box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
+        transition: all 0.3s ease;
+    }
+        .planet-btn:hover {
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.8);
+            transform: scale(1.05);
+        }
+
+    .input-style {
+        background-color: rgba(255, 255, 255, 0.85);
+        border: none;
+        border-radius: 10px;
+        padding: 0.75rem 1rem;
+        color: black;
+        width: 100%;
+    }
+
+        .input-style::placeholder {
+            color: #666;
+        }
+
+        .input-style:focus {
+            outline: none;
+            box-shadow: 0 0 10px #00f0ff;
+        }
+
+    .form-label {
+        color: white;
+    }
+
+    label[for="Input_RememberMe"] {
+        color: white;
+    }
+</style>
+
+<div class="row justify-content-center">
+    <div class="col-md-4">
+        <form method="post">
+            <h2 class="login-heading">Step into the stars</h2>
+            <hr />
+            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+            <div class="mb-3">
+                <label asp-for="Input.Email" class="form-label">Email</label>
+                <input asp-for="Input.Email" class="input-style" placeholder="Enter your email" />
+                <span asp-validation-for="Input.Email" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Input.Password" class="form-label">Password</label>
+                <input asp-for="Input.Password" class="input-style" placeholder="Enter your password" />
+                <span asp-validation-for="Input.Password" class="text-danger"></span>
+            </div>
+
+            <div class="checkbox mb-3">
+                <label asp-for="Input.RememberMe" class="form-label">
+                    <input class="form-check-input" asp-for="Input.RememberMe" />
+                    @Html.DisplayNameFor(m => m.Input.RememberMe)
+                </label>
+            </div>
+            <div class="text-center mt-3">
+                <p><a asp-page="./ForgotPassword" class="login-link">Forgot your password?</a></p>             
+            </div>
+
+            <div class="text-center">
+                <button type="submit" class="planet-btn">Log in</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

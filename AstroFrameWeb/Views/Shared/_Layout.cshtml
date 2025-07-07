@@ -1,0 +1,130 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - AstroFrameWeb</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/AstroFrameWeb.styles.css" asp-append-version="true" />
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        main {
+            flex: 1;
+        }
+
+        .neon-footer {
+            background-color: rgba(0, 0, 0, 0.6);
+            color: #00ffff;
+            padding: 12px 0;
+            text-align: center;
+            box-shadow: 0 -1px 15px rgba(0, 255, 255, 0.4);
+            font-weight: bold;
+        }
+
+        .neon-text {
+            color: #00ffff;
+            text-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff;
+        }
+
+        .neon-link {
+            color: #00ffff;
+            margin-left: 5px;
+            text-decoration: none;
+        }
+
+            .neon-link:hover {
+                text-shadow: 0 0 10px #00ffff;
+            }
+
+        .custom-navbar {
+            background-color: rgba(0, 0, 0, 0.6);
+            border: 1px solid #00ffff;
+            box-shadow: 0 0 15px #00ffff;
+            border-radius: 12px;
+            padding: 10px 20px;
+        }
+
+        .neon-link {
+            color: #00ffff !important;
+            text-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff;
+            font-weight: bold;
+        }
+
+            .neon-link:hover {
+                text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff;
+            }
+
+        .custom-navbar {
+            border-bottom: 2px solid #00ffff;
+            padding: 10px 20px;
+            white-space: nowrap;
+        }
+
+        .navbar-nav {
+            flex-direction: row !important;
+        }
+
+        .nav-item {
+            margin-left: 15px;
+            margin-right: 15px;
+        }
+    </style>
+
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-dark custom-navbar mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">AstroFrameWeb</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between align-items-center">
+                    <ul class="navbar-nav me-auto mb-2 mb-sm-0">
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="exploreDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Explore
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="exploreDropdown">
+                                <li><a class="dropdown-item" asp-controller="Planet" asp-action="Index">Planets</a></li>
+                                <li><a class="dropdown-item" asp-controller="Star" asp-action="Index">Stars</a></li>
+                                <li><a class="dropdown-item" asp-controller="Galaxy" asp-action="Index">Galaxies</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <partial name="_LoginPartial" />
+                </div>
+            </div>
+        </nav>
+    </header>
+ 
+    <main role="main" class="pb-3">
+        <div class="container">
+            @RenderBody()
+        </div>
+    </main>
+
+    <footer class="neon-footer">
+        <div class="container text-center">
+            &copy; 2025 - <span class="neon-text"></span>
+            <a asp-area="" asp-controller="Home" asp-action="Privacy" class="neon-link">Privacy</a>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

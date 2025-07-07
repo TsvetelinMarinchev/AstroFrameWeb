@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35919.96
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AstroFrameWeb", "AstroFrameWeb\AstroFrameWeb.csproj", "{C129051F-A439-4C25-BCDE-4556C0AA8B3C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AstroFrameWeb.Data", "AstroFrameWeb.Data\AstroFrameWeb.Data.csproj", "{5EE0FE81-E14D-405E-BD24-FAD480C3728D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AstroFrameWeb.Services", "AstroFrameWeb.Services\AstroFrameWeb.Services.csproj", "{5AFF7CE1-4548-4A66-A1AC-072DDB7BD3B3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AstroFrameWeb.ViewModels", "AstroFrameWeb.ViewModels\AstroFrameWeb.ViewModels.csproj", "{EF3ED52F-FA25-4504-AA95-86C818F549DC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AstroFrameWeb.Common", "AstroFrameWeb.Common\AstroFrameWeb.Common.csproj", "{215B8AF2-6011-4101-B8E8-15738CC30F9F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C129051F-A439-4C25-BCDE-4556C0AA8B3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C129051F-A439-4C25-BCDE-4556C0AA8B3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C129051F-A439-4C25-BCDE-4556C0AA8B3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C129051F-A439-4C25-BCDE-4556C0AA8B3C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5EE0FE81-E14D-405E-BD24-FAD480C3728D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5EE0FE81-E14D-405E-BD24-FAD480C3728D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5EE0FE81-E14D-405E-BD24-FAD480C3728D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5EE0FE81-E14D-405E-BD24-FAD480C3728D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5AFF7CE1-4548-4A66-A1AC-072DDB7BD3B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5AFF7CE1-4548-4A66-A1AC-072DDB7BD3B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5AFF7CE1-4548-4A66-A1AC-072DDB7BD3B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5AFF7CE1-4548-4A66-A1AC-072DDB7BD3B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF3ED52F-FA25-4504-AA95-86C818F549DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF3ED52F-FA25-4504-AA95-86C818F549DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF3ED52F-FA25-4504-AA95-86C818F549DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF3ED52F-FA25-4504-AA95-86C818F549DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{215B8AF2-6011-4101-B8E8-15738CC30F9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{215B8AF2-6011-4101-B8E8-15738CC30F9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{215B8AF2-6011-4101-B8E8-15738CC30F9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{215B8AF2-6011-4101-B8E8-15738CC30F9F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B4799877-0183-4542-AF28-D8FD6EEE52A3}
+	EndGlobalSection
+EndGlobal

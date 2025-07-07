@@ -1,0 +1,112 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+<style>
+    body {
+        background-image: url('/images/homePicture.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        color: white;
+    }
+
+    .text-center {
+        text-shadow: 0 0 5px black;
+    }
+
+    .hero-section {
+        text-align: center;
+        margin-top: 40px;
+    }
+
+    .hero-subtitle {
+        font-size: 1.25rem;
+        margin-bottom: 20px;
+        text-shadow: 0 0 4px black;
+    }
+
+    .explore-btn {
+        background-color: #00ffff;
+        color: black;
+        padding: 10px 20px;
+        border-radius: 25px;
+        text-decoration: none;
+        font-weight: bold;
+        box-shadow: 0 0 10px #00ffff;
+        transition: 0.3s ease;
+    }
+
+        .explore-btn:hover {
+            background-color: #00cccc;
+            color: white;
+        }
+
+    .feature-section {
+        margin-top: 60px;
+    }
+
+    .feature-card {
+        background-color: rgba(0, 0, 0, 0.6);
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        color: white;
+        box-shadow: 0 0 10px rgba(0,255,255,0.3);
+    }
+
+        .feature-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 0 8px rgba(0,255,255,0.5);
+        }
+
+        .feature-card h4 {
+            margin-top: 10px;
+            color: #00ffff;
+        }
+
+        .feature-card p {
+            font-size: 0.95rem;
+        }
+</style>
+
+<div class="text-center">
+    <h1 class="display-4">
+        Astro<span style="color: white; text-shadow: 0 0 8px white;">&#9734;</span>Frame
+    </h1>
+</div>
+
+<div class="hero-section mt-5">
+    <p class="hero-subtitle">Discover the wonders of the universe — planets, stars, galaxies and more.</p>
+    <a href="#explore" class="explore-btn">Explore the Cosmos</a>
+</div>
+
+<div class="container feature-section" id="explore">
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="feature-card">
+                <img src="/images/planets.jpg" alt="Planets" />
+                <h4>Planets</h4>
+                <p>Explore diverse worlds, from gas giants to rocky exoplanets.</p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="feature-card">
+                <img src="/images/stars.jpg" alt="Stars" />
+                <h4>Stars</h4>
+                <p>Learn how stars are born, live, and die in spectacular fashion.</p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="feature-card">
+                <img src="/images/galaxy.jpg" alt="Galaxies" />
+                <h4>Galaxies</h4>
+                <p>Journey across spiral arms and massive clusters of galaxies.</p>
+            </div>
+        </div>
+    </div>
+</div>
