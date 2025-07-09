@@ -36,5 +36,13 @@ namespace AstroFrameWeb.Common
             public const double PlanetMaxDistance = 1000000;
         }
 
+        public static class StarType
+        {
+            public const int StarTypeMinLenght = 1;
+            public const int StarTypeMaxLenght = 10;
+            public const int DescriptionStarTypeMaxLength = 100;
+
+        }
+
     }
 }

@@ -15,8 +15,4 @@
     <ProjectReference Include="..\AstroFrameWeb.Common\AstroFrameWeb.Common.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Migrations\" />
-  </ItemGroup>
-
 </Project>

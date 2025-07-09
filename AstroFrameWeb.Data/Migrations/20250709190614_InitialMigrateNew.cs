@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace AstroFrameWeb.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitialMigrateNew : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -48,6 +48,20 @@ namespace AstroFrameWeb.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "StarTypes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false, comment: "PK for StarType")
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false, comment: "The type of StarType"),
+                    Description = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true, comment: "Optional describe for StarType")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StarTypes", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -192,7 +206,8 @@ namespace AstroFrameWeb.Data.Migrations
                     IsPurchased = table.Column<bool>(type: "bit", nullable: false, comment: "Shows the star if it has been purchased"),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false, comment: "Shows real time now"),
                     OwnerId = table.Column<string>(type: "nvarchar(450)", nullable: true, comment: "FK to the user who owns the star"),
-                    GalaxyId = table.Column<int>(type: "int", nullable: false, comment: "Galaxy the star belongs to")
+                    GalaxyId = table.Column<int>(type: "int", nullable: false, comment: "Galaxy the star belongs to"),
+                    StarTypeId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -206,6 +221,12 @@ namespace AstroFrameWeb.Data.Migrations
                         name: "FK_Stars_Galaxies_GalaxyId",
                         column: x => x.GalaxyId,
                         principalTable: "Galaxies",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Stars_StarTypes_StarTypeId",
+                        column: x => x.StarTypeId,
+                        principalTable: "StarTypes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -414,6 +435,11 @@ namespace AstroFrameWeb.Data.Migrations
                 column: "OwnerId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Stars_StarTypeId",
+                table: "Stars",
+                column: "StarTypeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserFavoritePlanets_PlanetId",
                 table: "UserFavoritePlanets",
                 column: "PlanetId");
@@ -457,6 +483,9 @@ namespace AstroFrameWeb.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "Galaxies");
+
+            migrationBuilder.DropTable(
+                name: "StarTypes");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

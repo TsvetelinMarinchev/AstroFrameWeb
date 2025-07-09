@@ -71,5 +71,9 @@ namespace AstroFrameWeb.Data.Models
         [Comment("User comments on this star")]
         public ICollection<StarComment> Comments { get; set; } 
             = new HashSet<StarComment>();
+
+        public int StarTypeId { get; set; }
+
+        public StarType StarType { get; set; } =null!;
     }
 }

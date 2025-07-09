@@ -267,11 +267,16 @@ namespace AstroFrameWeb.Data.Migrations
                         .HasColumnType("decimal(18,2)")
                         .HasComment("Shows the price of the Star");
 
+                    b.Property<int>("StarTypeId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("GalaxyId");
 
                     b.HasIndex("OwnerId");
+
+                    b.HasIndex("StarTypeId");
 
                     b.ToTable("Stars");
                 });
@@ -303,6 +308,31 @@ namespace AstroFrameWeb.Data.Migrations
                     b.HasIndex("StarId");
 
                     b.ToTable("StarComments");
+                });
+
+            modelBuilder.Entity("AstroFrameWeb.Data.Models.StarType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasComment("PK for StarType");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasComment("Optional describe for StarType");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)")
+                        .HasComment("The type of StarType");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("StarTypes");
                 });
 
             modelBuilder.Entity("AstroFrameWeb.Data.Models.UserFavoritePlanet", b =>
@@ -516,9 +546,17 @@ namespace AstroFrameWeb.Data.Migrations
                         .WithMany("OwnedStars")
                         .HasForeignKey("OwnerId");
 
+                    b.HasOne("AstroFrameWeb.Data.Models.StarType", "StarType")
+                        .WithMany("Stars")
+                        .HasForeignKey("StarTypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("Galaxy");
 
                     b.Navigation("Owner");
+
+                    b.Navigation("StarType");
                 });
 
             modelBuilder.Entity("AstroFrameWeb.Data.Models.StarComment", b =>
@@ -632,6 +670,11 @@ namespace AstroFrameWeb.Data.Migrations
                     b.Navigation("Comments");
 
                     b.Navigation("Planets");
+                });
+
+            modelBuilder.Entity("AstroFrameWeb.Data.Models.StarType", b =>
+                {
+                    b.Navigation("Stars");
                 });
 #pragma warning restore 612, 618
         }

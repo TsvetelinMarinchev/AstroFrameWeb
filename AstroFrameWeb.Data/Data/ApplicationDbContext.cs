@@ -57,6 +57,12 @@ namespace AstroFrameWeb.Data
                   .WithOne(c => c.Star)
                   .HasForeignKey(c => c.StarId)
                   .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Star>()
+                .HasOne(s => s.StarType)
+                .WithMany(type =>type.Stars)
+                .HasForeignKey(s => s.StarTypeId)
+                .OnDelete(DeleteBehavior.Restrict);
            
         }
         public DbSet<Galaxy> Galaxies { get; set; } = null!;
@@ -65,5 +71,7 @@ namespace AstroFrameWeb.Data
         public DbSet<StarComment> StarComments { get; set; } = null!;
         public DbSet<PlanetComment> PlanetComments { get; set; } = null!;
         public DbSet<UserFavoritePlanet> UserFavoritePlanets { get; set; } = null!;
+
+        public DbSet<StarType> StarTypes { get; set; } = null!;
     }
 }

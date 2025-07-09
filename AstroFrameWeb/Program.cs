@@ -6,6 +6,7 @@ using AstroFrameWeb.Services.Interfaces;
 using AstroFrameWeb.Services.Implementations;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using AstroFrameWeb.Data.Models;
+using AstroFrameWeb.Data.Seeds;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -58,6 +59,9 @@ using (var scope = app.Services.CreateScope())
 {
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+    var services = scope.ServiceProvider;
+    var dbContext = services.GetRequiredService<ApplicationDbContext>();
+    StarSeeder.Seed(dbContext);
 
     string[] roleNames = { "Admin", "User" };
 
