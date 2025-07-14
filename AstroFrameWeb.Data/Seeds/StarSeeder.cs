@@ -12,31 +12,56 @@ namespace AstroFrameWeb.Data.Seeds
         public static void Seed(ApplicationDbContext dbContext)
         {
 
-            if(!dbContext.Stars.Any(s => s.Name == "Sun"))
+            var galaxy = dbContext.Galaxies.FirstOrDefault();
+            var user = dbContext.Users.FirstOrDefault();
+            var starType = dbContext.StarTypes.FirstOrDefault();
+
+            if (galaxy == null || user == null || starType == null)
             {
-                var galaxy = dbContext.Galaxies.FirstOrDefault();
-                var user = dbContext.Users.FirstOrDefault();
-
-                if(galaxy == null || user == null)
-                {
-                    return;// nqmame potrebitel i galaktika
-                }
-
-                var sun = new Star
-                {
-                    Name = "Sun",
-                    Description= "The Sun is the star at the centre of the Solar System.",
-                    Price=0,
-                    IsPurchased = false,
-                    CreatedOn = DateTime.UtcNow,
-                    OwnerId = user.Id,
-                    GalaxyId = galaxy.Id
-                };
-                dbContext.Stars.Add(sun);
-                dbContext.SaveChanges();
+                return;// nqmame potrebitel i galaktika
             }
+            var stars = new[]
+           {
+                    new Star { Name = "Sun",
+                        Description = "Our star",
+                        Price = 0, CreatedOn = DateTime.UtcNow,
+                        GalaxyId = galaxy.Id,
+                        StarTypeId = starType.Id,
+                        OwnerId = user.Id },
+                    new Star { Name = "Alpha Centauri",
+                        Description = "Closest star system",
+                        Price = 10, CreatedOn = DateTime.UtcNow,
+                        GalaxyId = galaxy.Id,
+                        StarTypeId = starType.Id },
+                    new Star { Name = "Betelgeuse",
+                        Description = "Red supergiant",
+                        Price = 50, CreatedOn = DateTime.UtcNow,
+                        GalaxyId = galaxy.Id,
+                        StarTypeId = starType.Id },
+                    new Star { Name = "Sirius",
+                        Description = "Brightest in the night sky",
+                        Price = 30, CreatedOn = DateTime.UtcNow,
+                        GalaxyId = galaxy.Id,
+                        StarTypeId = starType.Id },
+                    new Star { Name = "Vega", Description = "Very bright star", Price = 25, CreatedOn = DateTime.UtcNow, GalaxyId = galaxy.Id, StarTypeId = starType.Id }
+                };
+
+            var sun = new Star
+            {
+                Name = "Sun",
+                Description = "The Sun is the star at the centre of the Solar System.",
+                Price = 0,
+                IsPurchased = false,
+                CreatedOn = DateTime.UtcNow,
+                OwnerId = user.Id,
+                GalaxyId = galaxy.Id
+            };
+            dbContext.Stars.AddRange(stars);
+            dbContext.SaveChanges();
+
 
         }
 
     }
 }
+

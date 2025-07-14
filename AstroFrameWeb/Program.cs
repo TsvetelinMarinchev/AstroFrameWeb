@@ -61,7 +61,10 @@ using (var scope = app.Services.CreateScope())
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
     var services = scope.ServiceProvider;
     var dbContext = services.GetRequiredService<ApplicationDbContext>();
+    GalaxySeeder.Seed(dbContext);
+    StarTypeSeeder.Seed(dbContext);
     StarSeeder.Seed(dbContext);
+    PlanetSeeder.Seed(dbContext);
 
     string[] roleNames = { "Admin", "User" };
 

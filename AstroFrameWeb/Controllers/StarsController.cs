@@ -22,10 +22,22 @@ namespace AstroFrameWeb.Controllers
         }
 
         // GET: Stars
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchStr)
         {
-            var applicationDbContext = _context.Stars.Include(s => s.Galaxy).Include(s => s.Owner);
-            return View(await applicationDbContext.ToListAsync());
+            var starQuery = _context.Stars
+                .Include(s => s.Galaxy)
+                .Include(s => s.Owner)
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchStr))
+            {
+                starQuery = starQuery
+                    .Where(s => s.Name.Contains(searchStr));
+
+            }
+
+            //var applicationDbContext = _context.Stars.Include(s => s.Galaxy).Include(s => s.Owner);
+            return View(await starQuery.ToListAsync());
         }
 
         // GET: Stars/Details/5
@@ -53,7 +65,7 @@ namespace AstroFrameWeb.Controllers
         {
             ViewData["GalaxyId"] = new SelectList(_context.Galaxies, "Id", "Description");
             ViewData["OwnerId"] = new SelectList(_context.Users, "Id", "Id");
-            ViewData["GalaxyId"] = new SelectList(_context.Galaxies, "Id", "Name");
+           // ViewData["GalaxyId"] = new SelectList(_context.Galaxies, "Id", "Name");
             return View();
         }
 

@@ -32,18 +32,38 @@
         background-color: rgba(0, 0, 0, 0.5);
     }
 
-    .form-control {
-        background-color: rgba(255, 255, 255, 0.1);
-        color: white;
-        border: 1px solid #ccc;
+    input.form-control {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        border: 2px solid #00ffff;
+        padding: 8px;
+        font-size: 16px;
+        border-radius: 6px;
+    }
+
+    .btn {
+        background-color: #00ffff;
+        color: black;
+        font-weight: bold;
+        border-radius: 6px;
+        border: none;
+    }
+
+    ::placeholder {
+        color: #666 !important;
     }
 </style>
-
 <h1>Index</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+<form asp-controller="Stars" asp-action="Index" method="get" class="mb-3">
+    <div class="input-group">
+        <input type="text" name="searchStr" class="form-control" placeholder="Search stars by name..." />
+        <button type="submit" class="btn btn-primary">Search</button>
+    </div>
+</form>
 <table class="table">
     <thead>
         <tr>
