@@ -21,35 +21,40 @@ namespace AstroFrameWeb.Data.Seeds
                         GalaxyType = GalaxyType.Spiral,
                         NumberOfStars = 10000000,
                         DistanceFromEarth = 0,
-                        DiscoveredOn = DateTime.UtcNow },
-
+                        DiscoveredOn = DateTime.UtcNow,
+                        DiscoveredAgo = "13.5 billion years ago"},
+  
                     new Galaxy { Name = "Andromeda",
                         Description = "Closest spiral neighbor",
                         GalaxyType = GalaxyType.Spiral,
                         NumberOfStars = 100000000,
                         DistanceFromEarth = 2537000,
-                        DiscoveredOn = DateTime.UtcNow },
+                        DiscoveredOn = DateTime.UtcNow,
+                        DiscoveredAgo = "10.2 billion years ago"},
 
                     new Galaxy { Name = "Sombrero",
                         Description = "Hat-shaped galaxy",
                         GalaxyType = GalaxyType.Spiral,
                         NumberOfStars = 800000000,
                         DistanceFromEarth = 29000000,
-                        DiscoveredOn = DateTime.UtcNow },
+                        DiscoveredOn = DateTime.UtcNow,
+                        DiscoveredAgo = "8.2 billion years ago"},
 
                     new Galaxy { Name = "Messier 87",
                         Description = "Contains supermassive black hole",
                         GalaxyType = GalaxyType.Elliptical,
                         NumberOfStars = 1200000000,
                         DistanceFromEarth = 53000000,
-                        DiscoveredOn = DateTime.UtcNow },
+                        DiscoveredOn = DateTime.UtcNow,
+                        DiscoveredAgo = "11.4 billion years ago"},
 
                     new Galaxy { Name = "Triangulum",
                         Description = "Part of local group",
                         GalaxyType = GalaxyType.Spiral,
                         NumberOfStars = 400000000,
                         DistanceFromEarth = 2730000,
-                        DiscoveredOn = DateTime.UtcNow }
+                        DiscoveredOn = DateTime.UtcNow,
+                        DiscoveredAgo = "11.9 billion years ago"}
                 };
 
                 dbContext.Galaxies.AddRange(galaxies);

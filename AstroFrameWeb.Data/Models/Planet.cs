@@ -49,7 +49,9 @@ namespace AstroFrameWeb.Data.Models
         public DateTime DiscoveredOn { get; set; }
             = DateTime.UtcNow;
 
-        
+        public string? DiscoveredAgo { get; set; }
+
+
         [Required]
         [Display(Name = "Star Id")]
         [Comment("FK to the Star")]

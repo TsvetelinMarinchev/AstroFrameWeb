@@ -45,8 +45,9 @@ namespace AstroFrameWeb.Data.Models
         [Display(Name = "Created On")]
         [Comment("Shows real time now")]
         public DateTime CreatedOn { get; set; } = DateTime.UtcNow;
+        public string? DiscoveredAgo { get; set; }
 
-     
+
         [Display(Name = "Owner Id")]
         [Comment("FK to the user who owns the star")]
         public string? OwnerId { get; set; }

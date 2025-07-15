@@ -49,6 +49,8 @@ namespace AstroFrameWeb.Data.Models
         [Comment("Date when the Galaxy was discovered or added")]
         public DateTime DiscoveredOn { get; set; } = DateTime.UtcNow;
 
+        public string? DiscoveredAgo { get; set; }
+
         [Display(Name = "Creator Id")]
         [Comment("FK to the user who created this Galaxy")]
         public string? CreatorId { get; set; }
