@@ -44,6 +44,7 @@ namespace AstroFrameWeb.Data.Seeds
                 var stars = new[]
                {
                     new Star { Name = "Sun",
+                        ImageUrl = "/images/StarSun.jpg",
                         Description = "Our star",
                         Price = 0, CreatedOn = DateTime.UtcNow,
                         DiscoveredAgo= "4.6 billion years ago",
@@ -51,36 +52,36 @@ namespace AstroFrameWeb.Data.Seeds
                         StarTypeId = starType.Id,
                         OwnerId = user.Id },
                     new Star { Name = "Alpha Centauri",
+                        ImageUrl = "/images/StarAlphaCentauri.jpg",
                         Description = "Closest star system",
                         Price = 10, CreatedOn = DateTime.UtcNow,
                         DiscoveredAgo= "4.1 billion years ago",
                         GalaxyId = galaxy.Id,
                         StarTypeId = starType.Id },
                     new Star { Name = "Betelgeuse",
+                        ImageUrl = "/images/StarBetelgeuse.jpg",
                         Description = "Red supergiant",
                         Price = 50, CreatedOn = DateTime.UtcNow,
                         DiscoveredAgo= "8.0 billion years ago",
                         GalaxyId = galaxy.Id,
                         StarTypeId = starType.Id },
                     new Star { Name = "Sirius",
+                        ImageUrl = "/images/StarSirius.jpg",
                         Description = "Brightest in the night sky",
                         Price = 30, CreatedOn = DateTime.UtcNow,
                         DiscoveredAgo= "0.2 billion years ago",
                         GalaxyId = galaxy.Id,
                         StarTypeId = starType.Id },
                     new Star { Name = "Vega",
+                        ImageUrl = "/images/StarVega.jpg",
                         Description = "Very bright star",
                         Price = 25,
                         CreatedOn = DateTime.UtcNow,
                         DiscoveredAgo= "0.5 billion years ago",
                         GalaxyId = galaxy.Id,
                         StarTypeId = starType.Id }
-                    
-
 
                 };
-               
-
                 dbContext.Stars.AddRange(stars);
                 dbContext.SaveChanges();
             }
