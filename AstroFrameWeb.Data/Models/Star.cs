@@ -45,6 +45,10 @@ namespace AstroFrameWeb.Data.Models
         [Display(Name = "Created On")]
         [Comment("Shows real time now")]
         public DateTime CreatedOn { get; set; } = DateTime.UtcNow;
+
+        [Display(Name = "Image URL")]
+        [Comment("Local image file for the star")]
+        public string? ImageUrl { get; set; } // nullable 
         public string? DiscoveredAgo { get; set; }
 
 

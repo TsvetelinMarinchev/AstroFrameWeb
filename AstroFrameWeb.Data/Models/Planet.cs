@@ -50,6 +50,9 @@ namespace AstroFrameWeb.Data.Models
             = DateTime.UtcNow;
 
         public string? DiscoveredAgo { get; set; }
+        [Display(Name = "Image URL")]
+        [Comment("Local image file for the Planet")]
+        public string? ImageUrl { get; set; }
 
 
         [Required]

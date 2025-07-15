@@ -49,6 +49,10 @@ namespace AstroFrameWeb.Data.Models
         [Comment("Date when the Galaxy was discovered or added")]
         public DateTime DiscoveredOn { get; set; } = DateTime.UtcNow;
 
+        [Display(Name = "Image URL")]
+        [Comment("Local image file for the Galaxy")]
+        public string? ImageUrl { get; set; }
+
         public string? DiscoveredAgo { get; set; }
 
         [Display(Name = "Creator Id")]

@@ -23,6 +23,11 @@ namespace AstroFrameWeb.Data.Models
         public string Name { get; set; } = null!;
 
 
+        [Display(Name = "Image URL")]
+        [Comment("Local image file for the TypeOfStar")]
+        public string? ImageUrl { get; set; }
+
+
         [MaxLength(DescriptionStarTypeMaxLength)]
         [Comment("Optional describe for StarType")]
         public string? Description  { get; set; }
