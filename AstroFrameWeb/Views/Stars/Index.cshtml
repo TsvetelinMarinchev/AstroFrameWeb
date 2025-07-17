@@ -1,4 +1,4 @@
-﻿@model IEnumerable<AstroFrameWeb.Data.Models.Star>
+﻿@model AstroFrameWeb.Data.Models.Star
 
 @{
     ViewData["Title"] = "Index";
@@ -53,74 +53,37 @@
         color: #666 !important;
     }
 </style>
-<h1>Index</h1>
+<h1 class="text-center">@Model.Name</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<form asp-controller="Stars" asp-action="Index" method="get" class="mb-3">
-    <div class="input-group">
-        <input type="text" name="searchStr" class="form-control" placeholder="Search stars by name..." />
-        <button type="submit" class="btn btn-primary">Search</button>
+
+<form asp-controller="Stars" asp-action="Index" method="get" class="mb-3 text-center">
+    <div class="input-group justify-content-center">
+        <input type="text" name="searchStr" class="form-control w-50" placeholder="Search stars by name..." value="@ViewBag.SearchStr" />
+        <button type="submit" class="btn btn-primary ms-2">Search</button>
     </div>
 </form>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Price)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsPurchased)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreatedOn)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Owner)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Galaxy)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Price)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsPurchased)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedOn)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Owner.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Galaxy.Description)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+
+
+<div class="text-center">
+    <img src="@Url.Content("~/images/" + Model.ImageUrl)" alt="@Model.Name" class="star-img" />
+</div>
+
+
+<div class="container star-card text-center">
+    <p><strong>Description:</strong> @Model.Description</p>
+    <p><strong>Price:</strong> @Model.Price $</p>
+    <p><strong>Galaxy:</strong> <a href="/Galaxies/Details/@Model.GalaxyId">@Model.Galaxy.Name</a></p>
+    <p><strong>Type:</strong> <a href="/StarTypes/Details/@Model.StarTypeId">@Model.StarType.Name</a></p>
+</div>
+
+
+<div class="mt-4 d-flex justify-content-between">
+    <a class="btn btn-outline-light ms-4"
+       href="@Url.Action("Index", "Stars", new { index = (int)ViewBag.Index - 1, searchStr = ViewBag.SearchStr })">
+        ← Previous
+    </a>
+    <a class="btn btn-outline-light me-4"
+       href="@Url.Action("Index", "Stars", new { index = (int)ViewBag.Index + 1, searchStr = ViewBag.SearchStr })">
+        Next →
+    </a>
+</div>

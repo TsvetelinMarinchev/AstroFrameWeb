@@ -57,3 +57,13 @@ body {
         background-color: #001f1f;
         color: #00ffff;
     }
+
+
+.star-img {
+    max-width: 400px;
+    max-height: 400px;
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+}

@@ -22,22 +22,40 @@ namespace AstroFrameWeb.Controllers
         }
 
         // GET: Stars
-        public async Task<IActionResult> Index(string searchStr)
+        public IActionResult Index(int index = 0 , string? searchStr = null)
         {
-            var starQuery = _context.Stars
+            var starsQuery = _context.Stars
                 .Include(s => s.Galaxy)
-                .Include(s => s.Owner)
+                .Include(s => s.StarType)
                 .AsQueryable();
-
             if (!string.IsNullOrEmpty(searchStr))
             {
-                starQuery = starQuery
+                starsQuery = starsQuery
                     .Where(s => s.Name.Contains(searchStr));
+                index = 0;
+            }
+            var stars = starsQuery.ToList();
 
+            if (!stars.Any())
+            {
+                return NotFound("No stars found.");
+            }
+            if (index < 0)
+            {
+                index = 0;
+            }
+            if (index >= stars.Count)
+            {
+                index = stars.Count - 1;
             }
 
-            //var applicationDbContext = _context.Stars.Include(s => s.Galaxy).Include(s => s.Owner);
-            return View(await starQuery.ToListAsync());
+            var currentStar = stars[index];
+
+            ViewBag.Index = index;
+            ViewBag.Total = stars.Count;
+
+            return View(currentStar);
+
         }
 
         // GET: Stars/Details/5
