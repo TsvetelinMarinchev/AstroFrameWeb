@@ -1,0 +1,46 @@
+﻿@model AstroFrameWeb.Data.Models.Star
+
+
+@{
+    ViewData["Title"] = "View Star";
+    var index = ViewBag.Index as int? ?? 0;
+    var total = ViewBag.Total as int? ?? 0;
+}
+
+<div class="text-center">
+    <h1 class="mb-3">@Model.Name</h1>
+
+    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+    {
+        <img src="@Model.ImageUrl" alt="@Model.Name" class="img-fluid mb-3" style="max-height: 400px;" />
+    }
+
+    <p><strong>Description:</strong> @Model.Description</p>
+    <p><strong>Discovered:</strong> @Model.DiscoveredAgo</p>
+    <p><strong>Price:</strong> @Model.Price$</p>
+
+    <p>
+        <strong>Galaxy:</strong>
+        <a class="btn btn-link" href="/Galaxies/Details/@Model.GalaxyId">
+            @Model.Galaxy?.Name
+        </a>
+    </p>
+
+    <p><strong>Type:</strong> @Model.StarType?.Name</p>
+
+    <div class="d-flex justify-content-between mt-4">
+        @if (index > 0)
+        {
+            <a class="btn btn-outline-primary" href="@Url.Action("ViewStar", new { index = index - 1 })">← Previous</a>
+        }
+        else
+        {
+            <span></span>
+        }
+
+        @if (index < total - 1)
+        {
+            <a class="btn btn-outline-primary" href="@Url.Action("ViewStar", new { index = index + 1 })">Next →</a>
+        }
+    </div>
+</div>

@@ -184,5 +184,29 @@ namespace AstroFrameWeb.Controllers
         {
             return _context.Stars.Any(e => e.Id == id);
         }
+
+        public IActionResult ViewStar(int index = 0)
+        {
+            var stars = _context.Stars
+               .Include(s => s.Galaxy)
+               .Include(s => s.StarType)
+               .ToList();
+
+            if (!stars.Any())
+                return NotFound("No stars found.");
+
+            if (index < 0) 
+                index = 0;
+
+            if (index >= stars.Count)
+                index = stars.Count - 1;
+
+            var currentStar = stars[index];
+
+            ViewBag.Index = index;
+            ViewBag.Total = stars.Count;
+
+            return View(currentStar);
+        }
     }
 }

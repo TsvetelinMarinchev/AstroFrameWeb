@@ -17,7 +17,7 @@ namespace AstroFrameWeb.Data.Seeds
                 var galaxies = new[]
                 {
                     new Galaxy { Name = "Milky Way",
-                        ImageUrl = "/images/GalaxyMilkyWay",
+                        ImageUrl = "/images/GalaxyMilkyWay.jpg",
                         Description = "Our galaxy",
                         GalaxyType = GalaxyType.Spiral,
                         NumberOfStars = 10000000,
@@ -26,7 +26,7 @@ namespace AstroFrameWeb.Data.Seeds
                         DiscoveredAgo = "13.5 billion years ago"},
   
                     new Galaxy { Name = "Andromeda",
-                        ImageUrl = "/images/GalaxyAndromeda",
+                        ImageUrl = "/images/GalaxyAndromeda.jpg",
                         Description = "Closest spiral neighbor",
                         GalaxyType = GalaxyType.Spiral,
                         NumberOfStars = 100000000,
@@ -35,7 +35,7 @@ namespace AstroFrameWeb.Data.Seeds
                         DiscoveredAgo = "10.2 billion years ago"},
 
                     new Galaxy { Name = "Sombrero",
-                        ImageUrl = "/images/GalaxySombrero",
+                        ImageUrl = "/images/GalaxySombrero.jpg",
                         Description = "Hat-shaped galaxy",
                         GalaxyType = GalaxyType.Spiral,
                         NumberOfStars = 800000000,
@@ -44,7 +44,7 @@ namespace AstroFrameWeb.Data.Seeds
                         DiscoveredAgo = "8.2 billion years ago"},
 
                     new Galaxy { Name = "Messier 87",
-                        ImageUrl = "/images/GalaxyMessier87",
+                        ImageUrl = "/images/GalaxyMessier87.jpg",
                         Description = "Contains supermassive black hole",
                         GalaxyType = GalaxyType.Elliptical,
                         NumberOfStars = 1200000000,
@@ -53,7 +53,7 @@ namespace AstroFrameWeb.Data.Seeds
                         DiscoveredAgo = "11.4 billion years ago"},
 
                     new Galaxy { Name = "Triangulum",
-                        ImageUrl = "/images/GalaxyTriangulum",
+                        ImageUrl = "/images/GalaxyTriangulum.jpg",
                         Description = "Part of local group",
                         GalaxyType = GalaxyType.Spiral,
                         NumberOfStars = 400000000,
