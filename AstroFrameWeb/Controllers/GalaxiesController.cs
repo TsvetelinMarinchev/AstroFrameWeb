@@ -21,10 +21,34 @@ namespace AstroFrameWeb.Controllers
         }
 
         // GET: Galaxies
-        public async Task<IActionResult> Index()
+        //public async Task<IActionResult> Index()
+        //{
+        //    var applicationDbContext = _context.Galaxies.Include(g => g.Creator);
+        //    return View(await applicationDbContext.ToListAsync());
+        //}
+        public IActionResult Index(string searchStr, int index = 0)
         {
-            var applicationDbContext = _context.Galaxies.Include(g => g.Creator);
-            return View(await applicationDbContext.ToListAsync());
+            var galaxies = _context.Galaxies
+                  .Include(g => g.Creator)
+                  .AsQueryable();
+            if (!string.IsNullOrWhiteSpace(searchStr))
+            {
+                galaxies = galaxies.Where(g => g.Name.ToLower().Contains(searchStr.ToLower()));
+            }
+            var galaxyList = galaxies.ToList();
+
+            if (!galaxies.Any())
+                return NotFound("No galaxies found.");
+
+            if (index < 0) index = 0;
+            if (index >= galaxyList.Count) index = galaxyList.Count - 1;
+
+            var current = galaxyList[index];
+            ViewBag.Index = index;
+            ViewBag.Total = galaxyList.Count;
+            ViewBag.SearchStr = searchStr;
+
+            return View(current);
         }
 
         // GET: Galaxies/Details/5

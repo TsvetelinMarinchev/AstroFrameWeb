@@ -12,12 +12,19 @@ namespace AstroFrameWeb.Data.Seeds
     {
         public static void Seed(ApplicationDbContext dbContext)
         {
+            //dbContext.Stars.RemoveRange(dbContext.Stars.ToList());
+            //dbContext.Planets.RemoveRange(dbContext.Planets.ToList());
+            //dbContext.SaveChanges();
+            //dbContext.Galaxies.RemoveRange(dbContext.Galaxies.ToList());
+            //dbContext.SaveChanges();
+
+
             if (!dbContext.Galaxies.Any())
             {
                 var galaxies = new[]
                 {
                     new Galaxy { Name = "Milky Way",
-                        ImageUrl = "/images/GalaxyMilkyWay.jpg",
+                        ImageUrl = "GalaxyMilkyWay.jpg",
                         Description = "Our galaxy",
                         GalaxyType = GalaxyType.Spiral,
                         NumberOfStars = 10000000,
@@ -26,7 +33,7 @@ namespace AstroFrameWeb.Data.Seeds
                         DiscoveredAgo = "13.5 billion years ago"},
   
                     new Galaxy { Name = "Andromeda",
-                        ImageUrl = "/images/GalaxyAndromeda.jpg",
+                        ImageUrl = "GalaxyAndromeda.jpg",
                         Description = "Closest spiral neighbor",
                         GalaxyType = GalaxyType.Spiral,
                         NumberOfStars = 100000000,
@@ -35,7 +42,7 @@ namespace AstroFrameWeb.Data.Seeds
                         DiscoveredAgo = "10.2 billion years ago"},
 
                     new Galaxy { Name = "Sombrero",
-                        ImageUrl = "/images/GalaxySombrero.jpg",
+                        ImageUrl = "GalaxySombrero.jpg",
                         Description = "Hat-shaped galaxy",
                         GalaxyType = GalaxyType.Spiral,
                         NumberOfStars = 800000000,
@@ -44,7 +51,7 @@ namespace AstroFrameWeb.Data.Seeds
                         DiscoveredAgo = "8.2 billion years ago"},
 
                     new Galaxy { Name = "Messier 87",
-                        ImageUrl = "/images/GalaxyMessier87.jpg",
+                        ImageUrl = "GalaxyMessier87.jpg",
                         Description = "Contains supermassive black hole",
                         GalaxyType = GalaxyType.Elliptical,
                         NumberOfStars = 1200000000,
@@ -53,7 +60,7 @@ namespace AstroFrameWeb.Data.Seeds
                         DiscoveredAgo = "11.4 billion years ago"},
 
                     new Galaxy { Name = "Triangulum",
-                        ImageUrl = "/images/GalaxyTriangulum.jpg",
+                        ImageUrl = "GalaxyTriangulum.jpg",
                         Description = "Part of local group",
                         GalaxyType = GalaxyType.Spiral,
                         NumberOfStars = 400000000,

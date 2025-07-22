@@ -1,71 +1,75 @@
-﻿@model IEnumerable<AstroFrameWeb.Data.Models.Galaxy>
+﻿@model AstroFrameWeb.Data.Models.Galaxy
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Galaxy View";
 }
+<style>
+    body {
+        background-image: url('/images/StarIndexBody.jpg');
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        color: white;
+    }
 
-<h1>Index</h1>
+    .galaxy-img {
+        width: 400px;
+        height: auto;
+        border-radius: 12px;
+        box-shadow: 0 0 20px cyan;
+    }
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.GalaxyType)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NumberOfStars)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DistanceFromEarth)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DiscoveredOn)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Creator)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.GalaxyType)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NumberOfStars)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DistanceFromEarth)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DiscoveredOn)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Creator.Id)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    .galaxy-card {
+        background-color: rgba(0,0,0,0.5);
+        border-radius: 15px;
+        padding: 20px;
+        margin-top: 30px;
+        color: white;
+    }
+
+    .btn-nav {
+        background-color: cyan;
+        border-radius: 8px;
+        color: black;
+        padding: 10px 20px;
+        font-weight: bold;
+    }
+
+    input.form-control {
+        background-color: white;
+        color: black;
+        border: 2px solid cyan;
+        border-radius: 8px;
+        padding: 8px;
+        width: 300px;
+    }
+</style>
+
+<h1 class="text-center">@Model.Name</h1> 
+<form asp-controller="Galaxies" asp-action="Index" method="get" class="mb-3 text-center">
+    <div class="input-group justify-content-center">
+        <input type="text" name="searchStr" class="form-control w-50" placeholder="Search galaxies..." value="@ViewBag.SearchStr" />
+        <button type="submit" class="btn btn-primary ms-2">Search</button>
+    </div>
+</form>
+<div class="text-center">
+    <img src="@Url.Content("~/images/" + Model.ImageUrl)" alt="@Model.Name" class="galaxy-img" />
+</div>
+
+<div class="container galaxy-card text-center">
+    <p><strong>Description:</strong> @Model.Description</p>
+    <p><strong>Type:</strong> @Model.GalaxyType</p>
+    <p><strong>Stars:</strong> @Model.NumberOfStars</p>
+    <p><strong>Distance:</strong> @Model.DistanceFromEarth light years</p>
+    <p><strong>Discovered:</strong> @Model.DiscoveredAgo</p>
+</div>
+<div class="mt-4 d-flex justify-content-between">
+    <a class="btn btn-nav"
+       href="@Url.Action("Index", "Galaxies", new { index = (int)ViewBag.Index - 1, searchStr = ViewBag.SearchStr })">
+        ← Previous
+    </a>
+    <a class="btn btn-nav"
+       href="@Url.Action("Index", "Galaxies", new { index = (int)ViewBag.Index + 1, searchStr = ViewBag.SearchStr })">
+        Next →
+    </a>
+</div>
