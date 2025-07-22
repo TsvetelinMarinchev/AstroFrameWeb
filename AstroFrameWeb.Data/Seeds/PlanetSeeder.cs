@@ -12,19 +12,26 @@ namespace AstroFrameWeb.Data.Seeds
 
         public static void Seed(ApplicationDbContext dbContext)
         {
+            //TODO
+            //var Oldplanets = dbContext.Planets.ToList();
+            //dbContext.Planets.RemoveRange(Oldplanets);
+            //dbContext.SaveChanges();
+
             if (!dbContext.Planets.Any())
             {
+               
                 var star = dbContext.Stars.FirstOrDefault();
                 var galaxy = dbContext.Galaxies.FirstOrDefault();
                 var user = dbContext.Users.FirstOrDefault();
 
                 if (star == null || galaxy == null || user == null)
                     return;
+             
 
                 var planets = new[]
                 {
                     new Planet { Name = "Mercury",
-                        ImageUrl = "/images/PlanetMercury.jpg",
+                        ImageUrl = "PlanetMercury.jpg",
                         Description = "Closest planet to Sun",
                         Mass = 0.055, Radius = 0.383,
                         DistanceFromEarth = 77,
@@ -33,7 +40,7 @@ namespace AstroFrameWeb.Data.Seeds
                         StarId = star.Id, GalaxyId = galaxy.Id,
                         CreatorId = user.Id },
                     new Planet { Name = "Venus",
-                        ImageUrl = "/images/PlanetVenus.jpg",
+                        ImageUrl = "PlanetVenus.jpg",
                         Description = "Similar to Earth",
                         Mass = 0.815, Radius = 0.949,
                         DistanceFromEarth = 261,
@@ -42,7 +49,7 @@ namespace AstroFrameWeb.Data.Seeds
                         StarId = star.Id, GalaxyId = galaxy.Id,
                         CreatorId = user.Id },
                     new Planet { Name = "Earth",
-                        ImageUrl = "/images/PlanetEarth.jpg",
+                        ImageUrl = "PlanetEarth.jpg",
                         Description = "Our home",
                         Mass = 1.0, Radius = 1.0,
                         DistanceFromEarth = 0,
@@ -51,7 +58,7 @@ namespace AstroFrameWeb.Data.Seeds
                         StarId = star.Id, GalaxyId = galaxy.Id,
                         CreatorId = user.Id },
                     new Planet { Name = "Mars",
-                        ImageUrl = "/images/PlanetMars.jpg",
+                        ImageUrl = "PlanetMars.jpg",
                         Description = "The red planet",
                         Mass = 0.107, Radius = 0.532,
                         DistanceFromEarth = 225,
@@ -60,7 +67,7 @@ namespace AstroFrameWeb.Data.Seeds
                         StarId = star.Id, GalaxyId = galaxy.Id,
                         CreatorId = user.Id },
                     new Planet { Name = "Jupiter",
-                        ImageUrl = "/images/PlanetJupiter.jpg",
+                        ImageUrl = "PlanetJupiter.jpg",
                         Description = "Largest planet",
                         Mass = 317.8, Radius = 11.21,
                         DistanceFromEarth = 778,

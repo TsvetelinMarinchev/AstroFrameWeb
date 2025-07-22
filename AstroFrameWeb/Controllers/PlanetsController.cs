@@ -21,10 +21,43 @@ namespace AstroFrameWeb.Controllers
         }
 
         // GET: Planets
-        public async Task<IActionResult> Index()
+        public IActionResult Index(int index = 0 )
         {
-            var applicationDbContext = _context.Planets.Include(p => p.Creator).Include(p => p.Galaxy).Include(p => p.Star);
-            return View(await applicationDbContext.ToListAsync());
+            var planets = _context.Planets
+                      .Include(p => p.Star)
+                      .Include(p => p.Galaxy)
+                      .ToList();
+
+            if (!planets.Any())
+                return NotFound("No planets found.");
+
+            if (index < 0) index = 0;
+            if (index >= planets.Count) index = planets.Count - 1;
+
+            var current = planets[index];
+            ViewBag.Index = index;
+            ViewBag.Total = planets.Count;
+
+            return View(current);
+        }
+        public IActionResult ViewPlanet(int index = 0)
+        {
+            var planets = _context.Planets
+                .Include(p => p.Star)
+                .Include(p => p.Galaxy)
+                .ToList();
+
+            if (!planets.Any())
+                return NotFound("No planets found.");
+
+            if (index < 0) index = 0;
+            if (index >= planets.Count) index = planets.Count - 1;
+
+            var current = planets[index];
+            ViewBag.Index = index;
+            ViewBag.Total = planets.Count;
+
+            return View("ViewPlanet", current);
         }
 
         // GET: Planets/Details/5
