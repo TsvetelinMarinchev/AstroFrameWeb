@@ -14,19 +14,26 @@ namespace AstroFrameWeb.Controllers
     public class PlanetsController : Controller
     {
         private readonly ApplicationDbContext _context;
-
+        // TO DO VIEW small size
         public PlanetsController(ApplicationDbContext context)
         {
             _context = context;
         }
 
         // GET: Planets
-        public IActionResult Index(int index = 0 )
+        public IActionResult Index(string searchStr, int index = 0 )
         {
             var planets = _context.Planets
                       .Include(p => p.Star)
                       .Include(p => p.Galaxy)
                       .ToList();
+
+            if (!string.IsNullOrEmpty(searchStr))
+            {
+                planets = planets
+                    .Where(p => p.Name.ToLower().Contains(searchStr.ToLower()))
+                    .ToList();
+            }
 
             if (!planets.Any())
                 return NotFound("No planets found.");
@@ -37,8 +44,9 @@ namespace AstroFrameWeb.Controllers
             var current = planets[index];
             ViewBag.Index = index;
             ViewBag.Total = planets.Count;
+            ViewBag.SearchStr = searchStr;
 
-            return View(current);
+            return View("Index", current);
         }
         public IActionResult ViewPlanet(int index = 0)
         {

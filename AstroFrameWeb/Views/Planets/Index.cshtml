@@ -38,6 +38,12 @@
 </style>
 
 <h1 class="text-center">@Model.Name</h1>
+<form asp-controller="Planets" asp-action="Index" method="get" class="mb-3 text-center">
+    <div class="input-group justify-content-center">
+        <input type="text" name="searchStr" class="form-control w-50" placeholder="Search planets by name..." value="@ViewBag.SearchStr" />
+        <button type="submit" class="btn btn-primary ms-2">Search</button>
+    </div>
+</form>
 
 <div class="text-center">
     <img src="@Url.Content("~/images/" + Model.ImageUrl)" alt="@Model.Name" class="planet-img" />
@@ -55,11 +61,11 @@
 
 <div class="mt-4 d-flex justify-content-between">
     <a class="btn btn-nav"
-       href="@Url.Action("Index", "Planets", new { index = (int)ViewBag.Index - 1 })">
+       href="@Url.Action("Index", "Planets", new { index = (int)ViewBag.Index - 1, searchStr = ViewBag.SearchStr })">
         ← Previous
     </a>
     <a class="btn btn-nav"
-       href="@Url.Action("Index", "Planets", new { index = (int)ViewBag.Index + 1 })">
+       href="@Url.Action("Index", "Planets", new { index = (int)ViewBag.Index + 1, searchStr = ViewBag.SearchStr })">
         Next →
     </a>
 </div>
