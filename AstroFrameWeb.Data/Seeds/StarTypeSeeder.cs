@@ -11,21 +11,37 @@ namespace AstroFrameWeb.Data.Seeds
     {
         public static void Seed(ApplicationDbContext dbContext)
         {
+
+            var planets =
+                dbContext.Planets.ToList();
+                dbContext.Planets.RemoveRange(planets);
+                dbContext.SaveChanges();
+            var stars =
+                dbContext.Stars.ToList();
+                dbContext.Stars.RemoveRange(stars);
+                dbContext.SaveChanges();
+            var starType = 
+                dbContext.StarTypes.ToList();
+                dbContext.StarTypes.RemoveRange(starType);
+               dbContext.SaveChanges();
+
+
             if (!dbContext.StarTypes.Any())
             {
                 var types = new[]
                 {
-                    new StarType { Name = "G-type", ImageUrl = "/images/StartypeG.jpg", Description = "Like the Sun" },
-                    new StarType { Name = "M-type", ImageUrl = "/images/StartypeM.jpg", Description = "Cool red dwarfs" },
-                    new StarType { Name = "O-type", ImageUrl = "/images/StartypeO.jpg", Description = "Hot and massive" },
-                    new StarType { Name = "B-type", ImageUrl = "/images/StartypeB.jpg", Description = "Blue and bright" },
-                    new StarType { Name = "K-type", ImageUrl = "/images/StartypeK.jpg", Description = "Orange main sequence" }
+                    new StarType { Name = "G-type", ImageUrl = "StarTypeG.jpg", Description = "Like the Sun" },
+                    new StarType { Name = "M-type", ImageUrl = "StarTypeM.jpg", Description = "Cool red dwarfs" },
+                    new StarType { Name = "O-type", ImageUrl = "StarTypeO.jpg", Description = "Hot and massive" },
+                    new StarType { Name = "B-type", ImageUrl = "StarTypeB.jpg", Description = "Blue and bright" },
+                    new StarType { Name = "K-type", ImageUrl = "StarTypeK.jpg", Description = "Orange main sequence" }
                 };
 
                 dbContext.StarTypes.AddRange(types);
+                dbContext.SaveChanges();
             }
             
-            dbContext.SaveChanges();
+           
         }
     }
 }
