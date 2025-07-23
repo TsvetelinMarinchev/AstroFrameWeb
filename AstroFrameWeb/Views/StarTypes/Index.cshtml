@@ -1,5 +1,6 @@
 ﻿@model IEnumerable<AstroFrameWeb.Data.Models.StarType>
 
+
 @{
     ViewData["Title"] = "Star Types";
 }
@@ -10,22 +11,33 @@
         flex-wrap: wrap;
         justify-content: center;
         gap: 30px;
-        .star-type-card
-
-    {
-        background-color: rgba(0, 0, 0, 0.6);
         padding: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .star-type-card {
+        background-color: rgba(0, 0, 0, 0.75);
+        padding: 15px;
         border-radius: 10px;
-        width: 300px;
+        width: 220px;
         text-align: center;
         color: white;
-        box-shadow: 0 0 15px cyan;
+        box-shadow: 0 0 10px cyan;
+        transition: transform 0.2s ease-in-out;
     }
 
-    .star-type-card img {
-        width: 100%;
-        border-radius: 8px;
-    }
+        .star-type-card:hover {
+            transform: scale(1.03);
+        }
+
+        .star-type-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
 
     .btn-link {
         margin-top: 10px;
@@ -43,8 +55,16 @@
         background-size: cover;
         background-repeat: no-repeat;
         color: white;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    h1 {
+        margin-top: 20px;
+        text-align: center;
+        font-size: 36px;
     }
 </style>
+
 <h1 class="text-center">Star Types</h1>
 
 <div class="star-type-grid">

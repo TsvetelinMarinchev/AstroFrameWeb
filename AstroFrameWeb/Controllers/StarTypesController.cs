@@ -54,7 +54,7 @@ namespace AstroFrameWeb.Controllers
             ViewBag.Total = starList.Count;
             ViewBag.SearchStr = searchStr;
 
-            return View(current);
+            return RedirectToAction("Index", "Stars", new { id = current.Id });
 
         }
 
