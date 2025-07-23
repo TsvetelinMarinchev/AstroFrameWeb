@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using AstroFrameWeb.Data;
 using AstroFrameWeb.Data.Models;
+using System.Diagnostics;
 
 namespace AstroFrameWeb.Controllers
 {
@@ -18,11 +19,43 @@ namespace AstroFrameWeb.Controllers
         {
             _context = context;
         }
-
-        // GET: StarTypes
         public async Task<IActionResult> Index()
         {
             return View(await _context.StarTypes.ToListAsync());
+        }
+
+        // GET: StarTypes
+        public  IActionResult StarTypeView(int? starTypeId, string searchStr, int index = 0)
+        {
+            var stars = _context.Stars
+                .Include(s => s.Galaxy)
+                .Include(s => s.StarType)
+                .AsQueryable();
+
+            if (starTypeId.HasValue)
+            {
+                stars = stars.Where(s => s.StarTypeId == starTypeId);
+            }
+
+            if (!string.IsNullOrEmpty(searchStr))
+            {
+                stars = stars.Where(s => s.Name.ToLower().Contains(searchStr.ToLower()));
+            }
+            var starList = stars.ToList();
+
+            if (!starList.Any())
+                return NotFound("No stars found.");
+
+            if (index < 0) index = 0;
+            if (index >= starList.Count) index = starList.Count - 1;
+
+            var current = starList[index];
+            ViewBag.Index = index;
+            ViewBag.Total = starList.Count;
+            ViewBag.SearchStr = searchStr;
+
+            return View(current);
+
         }
 
         // GET: StarTypes/Details/5
