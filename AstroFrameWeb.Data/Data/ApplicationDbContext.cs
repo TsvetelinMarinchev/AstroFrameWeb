@@ -73,5 +73,7 @@ namespace AstroFrameWeb.Data
         public DbSet<UserFavoritePlanet> UserFavoritePlanets { get; set; } = null!;
 
         public DbSet<StarType> StarTypes { get; set; } = null!;
+
+        public DbSet<StarOrder> StarOrders { get; set; }=null!;
     }
 }
