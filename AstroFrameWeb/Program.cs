@@ -15,7 +15,7 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-
+//
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
@@ -29,7 +29,12 @@ builder.Services.AddRazorPages();
 
 
 builder.Services.AddSingleton<IEmailSender, DummyEmailSender>();
+builder.Services.AddMvc();
 
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Identity/Account/Login";
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -54,6 +59,7 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
+
 
 using (var scope = app.Services.CreateScope())
 {

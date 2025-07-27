@@ -110,12 +110,19 @@ namespace AstroFrameWeb.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
+
+            var star = await _context.Stars.FindAsync(id);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (star == null || (star.OwnerId != userId && !User.IsInRole("Admin")))
+            {
+                return Forbid();
+            }
             if (id == null)
             {
                 return NotFound();
             }
-
-            var star = await _context.Stars.FindAsync(id);
+ 
             if (star == null)
             {
                 return NotFound();
@@ -132,6 +139,13 @@ namespace AstroFrameWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Price,IsPurchased,CreatedOn,OwnerId,GalaxyId")] Star star)
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var existingStar = await _context.Stars.AsNoTracking().FirstOrDefaultAsync(s => s.Id == id);
+            if (existingStar == null || (existingStar.OwnerId != userId && !User.IsInRole("Admin")))
+            {
+                return Forbid();
+            }
+
             if (id != star.Id)
             {
                 return NotFound();
@@ -225,6 +239,28 @@ namespace AstroFrameWeb.Controllers
             ViewBag.Total = stars.Count;
 
             return View(currentStar);
+        }
+
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> Buy(int id)
+        {
+            var star = await _context.Stars.FindAsync(id);
+
+            if (star == null)
+                return NotFound();
+
+            if (star.IsPurchased)
+            {
+                TempData["BuyMessage"] = "Star already purchased.";
+                
+            }
+            star.IsPurchased = true;
+            star.OwnerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index");
         }
     }
 }

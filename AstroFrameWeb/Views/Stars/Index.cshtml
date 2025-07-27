@@ -1,7 +1,23 @@
 ﻿@model AstroFrameWeb.Data.Models.Star
+@using System.Security.Claims
 
 @{
     ViewData["Title"] = "Index";
+}
+
+@if (!Model.IsPurchased)
+{
+    <form asp-action="Buy" asp-route-id="@Model.Id" method="post">
+        <button type="submit" class="btn btn-success">Buy the Star</button>
+    </form>
+}
+else if (Model.OwnerId == User.FindFirstValue(System.Security.Claims.ClaimTypes.NameIdentifier))
+{
+    <span class="text-success">Тази звезда вече е твоя</span>
+}
+else
+{
+    <p class="text-warning"><strong>This star is already purchased.</strong></p>
 }
 <style>
     body {
@@ -54,6 +70,7 @@
     }
 </style>
 <h1 class="text-center">@Model.Name</h1>
+
 
 
 <form asp-controller="Stars" asp-action="Index" method="get" class="mb-3 text-center">
