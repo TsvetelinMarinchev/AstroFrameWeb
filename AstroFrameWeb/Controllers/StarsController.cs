@@ -124,25 +124,26 @@ namespace AstroFrameWeb.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
-
-            var star = await _context.Stars.FindAsync(id);
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            if (star == null || (star.OwnerId != userId && !User.IsInRole("Admin")))
-            {
-                return Forbid();
-            }
             if (id == null)
             {
                 return NotFound();
             }
- 
+            var star = await _context.Stars
+                .Include(s => s.Owner)
+                .FirstOrDefaultAsync(s => s.Id == id);
+
             if (star == null)
             {
                 return NotFound();
             }
-            ViewData["GalaxyId"] = new SelectList(_context.Galaxies, "Id", "Description", star.GalaxyId);
-            ViewData["OwnerId"] = new SelectList(_context.Users, "Id", "Id", star.OwnerId);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var isAdmin = User.IsInRole("Admin");
+
+            if (star.OwnerId != userId && !isAdmin)
+            {
+                return Forbid();
+            }
+            PopulateDropDownsHelper(star.GalaxyId, star.StarTypeId);
             return View(star);
         }
 
