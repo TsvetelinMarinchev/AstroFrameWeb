@@ -61,9 +61,9 @@ namespace AstroFrameWeb.Data.Models
         [Comment("Navigation property to the user who owns the star")]
         public ApplicationUser? Owner { get; set; }
 
-        
-        [Required]
-        [Comment("Galaxy the star belongs to")]
+
+        [Required(ErrorMessage = "Моля, изберете галактика")]
+        [Range(1, int.MaxValue, ErrorMessage = "Моля, изберете галактика")]
         public int GalaxyId { get; set; }
 
         [ForeignKey(nameof(GalaxyId))]
@@ -77,6 +77,8 @@ namespace AstroFrameWeb.Data.Models
         public ICollection<StarComment> Comments { get; set; } 
             = new HashSet<StarComment>();
 
+        [Required(ErrorMessage = "Моля, изберете тип звезда")]
+        [Range(1, int.MaxValue, ErrorMessage = "Моля, изберете тип звезда")]
         public int StarTypeId { get; set; }
 
         public StarType StarType { get; set; } =null!;

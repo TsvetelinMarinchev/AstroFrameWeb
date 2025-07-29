@@ -79,11 +79,24 @@ else
         <button type="submit" class="btn btn-primary ms-2">Search</button>
     </div>
 </form>
+@{
+    var imageUrl = Model.ImageUrl;
 
+    bool isExternal = !string.IsNullOrEmpty(imageUrl) &&
+                      (imageUrl.StartsWith("http://") || imageUrl.StartsWith("https://"));
 
-<div class="text-center">
-    <img src="@Url.Content("~/images/" + Model.ImageUrl)" alt="@Model.Name" class="star-img" />
-</div>
+    string finalUrl = isExternal
+        ? imageUrl
+        : Url.Content("~/images/" + imageUrl);
+}
+
+@if (!string.IsNullOrEmpty(imageUrl))
+{
+    <div class="text-center">
+        <img src="@finalUrl" alt="@Model.Name" class="star-img" />
+    </div>
+}
+
 
 
 <div class="container star-card text-center">

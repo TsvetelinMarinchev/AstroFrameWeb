@@ -1,17 +1,15 @@
-﻿@model AstroFrameWeb.Data.Models.Star
+﻿@model AstroFrameWeb.Data.Models.ViewModels.StarCreateViewModel
 
 @{
     ViewData["Title"] = "Create";
 }
-
 <h1>Create</h1>
-
 <h4>Star</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-6">
         <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" />
@@ -27,27 +25,64 @@
                 <input asp-for="Price" class="form-control" />
                 <span asp-validation-for="Price" class="text-danger"></span>
             </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="IsPurchased" /> @Html.DisplayNameFor(model => model.IsPurchased)
-                </label>
+            <div class="form-group">
+                <label class="control-label">Galaxy</label>
+                <div class="form-group">
+                    <label asp-for="GalaxyId" class="control-label">Galaxy</label>
+                    <select asp-for="GalaxyId" class="form-control" asp-items="Model.Galaxies">
+                        <option value="">-- Избери галактика --</option>
+                    </select>
+                    <span asp-validation-for="GalaxyId" class="text-danger"></span>
+                </div>
             </div>
             <div class="form-group">
-                <label asp-for="GalaxyId" class="control-label"></label>
-                <select asp-for="GalaxyId" class ="form-control" asp-items="ViewBag.GalaxyId"></select>
-                <span asp-validation-for="GalaxyId" class="text-danger"></span>
+                <label asp-for="StarTypeId" class="control-label">Star Type</label>
+                <select asp-for="StarTypeId" class="form-control" asp-items="Model.StarTypes">
+                    <option value="">-- Избери тип звезда --</option>
+                </select>
+                <span asp-validation-for="StarTypeId" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="ImageUrl" class="control-label">Image URL</label>
+                <input asp-for="ImageUrl" class="form-control" id="imageUrlInput" placeholder="https://example.com/image.jpg" />
+                <span asp-validation-for="ImageUrl" class="text-danger"></span>
+            </div>
+
+            <div class="form-group text-center mt-3">
+                <img id="imagePreview" src="" alt="Preview" style="max-width: 300px; display: none; border-radius: 10px; box-shadow: 0 0 10px cyan;" />
+            </div>
+            <div class="form-group mt-3">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
+            @if (ViewData.ModelState != null)
+            {
+                foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <div class="text-danger">@error.ErrorMessage</div>
+                }
+            }
         </form>
+
+        <div class="mt-3">
+            <a asp-action="Index">Back to List</a>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        document.getElementById("imageUrlInput").addEventListener("input", function () {
+            const url = this.value;
+            const img = document.getElementById("imagePreview");
+            if (url && url.startsWith("http")) {
+                img.src = url;
+                img.style.display = "block";
+            } else {
+                img.style.display = "none";
+            }
+        });
+    </script>
 }

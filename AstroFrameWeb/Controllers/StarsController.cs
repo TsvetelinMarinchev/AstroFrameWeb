@@ -9,6 +9,7 @@ using AstroFrameWeb.Data;
 using AstroFrameWeb.Data.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using AstroFrameWeb.Data.Models.ViewModels;
 
 namespace AstroFrameWeb.Controllers
 {
@@ -38,17 +39,9 @@ namespace AstroFrameWeb.Controllers
 
             if (!stars.Any())
             {
-                return NotFound("No stars found.");
+                 return View("Empty");
             }
-            if (index < 0)
-            {
-                index = 0;
-            }
-            if (index >= stars.Count)
-            {
-                index = stars.Count - 1;
-            }
-
+            index = Math.Clamp(index, 0, stars.Count - 1);
             var currentStar = stars[index];
 
             ViewBag.Index = index;
@@ -68,8 +61,9 @@ namespace AstroFrameWeb.Controllers
 
             var star = await _context.Stars
                 .Include(s => s.Galaxy)
+                .Include(s => s.StarType)
                 .Include(s => s.Owner)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(s => s.Id == id);
             if (star == null)
             {
                 return NotFound();
@@ -79,31 +73,51 @@ namespace AstroFrameWeb.Controllers
         }
 
         // GET: Stars/Create
+        [Authorize]
         public IActionResult Create()
         {
-            ViewData["GalaxyId"] = new SelectList(_context.Galaxies, "Id", "Description");
-            ViewData["OwnerId"] = new SelectList(_context.Users, "Id", "Id");
-           // ViewData["GalaxyId"] = new SelectList(_context.Galaxies, "Id", "Name");
-            return View();
+            var viewModel = new StarCreateViewModel
+            {
+                Galaxies = _context.Galaxies
+            .Select(g => new SelectListItem { Value = g.Id.ToString(), Text = g.Name }),
+                StarTypes = _context.StarTypes
+            .Select(s => new SelectListItem { Value = s.Id.ToString(), Text = s.Name })
+            };
+            return View(viewModel);
         }
 
         // POST: Stars/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize] // samo lognati da syzdavat
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description,Price,IsPurchased,GalaxyId")] Star star)
+        public async Task<IActionResult> Create(StarCreateViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                star.OwnerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                star.CreatedOn = DateTime.UtcNow;
-                _context.Add(star);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                model.Galaxies = _context.Galaxies
+                    .Select(g => new SelectListItem { Value = g.Id.ToString(), Text = g.Name });
+                model.StarTypes = _context.StarTypes
+                    .Select(s => new SelectListItem { Value = s.Id.ToString(), Text = s.Name });
+                return View(model);
             }
-            ViewData["GalaxyId"] = new SelectList(_context.Galaxies, "Id", "Name", star.GalaxyId);
-            return View(star);
+            var star = new Star
+            {
+                Name = model.Name,
+                Description = model.Description,
+                Price = model.Price,
+                GalaxyId = model.GalaxyId,
+                StarTypeId = model.StarTypeId,
+                ImageUrl = model.ImageUrl,
+                IsPurchased = false,
+                OwnerId = User.FindFirstValue(ClaimTypes.NameIdentifier),
+                CreatedOn = DateTime.UtcNow,
+                DiscoveredAgo = "500 years ago"
+            };
+            _context.Stars.Add(star);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Details), new { id = star.Id });
         }
 
         // GET: Stars/Edit/5
@@ -137,44 +151,38 @@ namespace AstroFrameWeb.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Price,IsPurchased,CreatedOn,OwnerId,GalaxyId")] Star star)
+
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Price,IsPurchased,CreatedOn,OwnerId,GalaxyId,StarTypeId,ImageUrl")] Star star)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var existingStar = await _context.Stars.AsNoTracking().FirstOrDefaultAsync(s => s.Id == id);
-            if (existingStar == null || (existingStar.OwnerId != userId && !User.IsInRole("Admin")))
-            {
-                return Forbid();
-            }
+            if (id != star.Id) return NotFound();
 
-            if (id != star.Id)
+            if (!ModelState.IsValid)
             {
-                return NotFound();
-            }
+                if (ViewData["GalaxyId"] == null)
+                    ViewData["GalaxyId"] = new SelectList(_context.Galaxies, "Id", "Name", star.GalaxyId);
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(star);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!StarExists(star.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                if (ViewData["StarTypeId"] == null)
+                    ViewData["StarTypeId"] = new SelectList(_context.StarTypes, "Id", "Name", star.StarTypeId);
+
+                return View(star);
             }
-            ViewData["GalaxyId"] = new SelectList(_context.Galaxies, "Id", "Description", star.GalaxyId);
-            ViewData["OwnerId"] = new SelectList(_context.Users, "Id", "Id", star.OwnerId);
-            return View(star);
+            try
+
+            {
+                _context.Update(star);
+                await _context.SaveChangesAsync();
+
+           }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!StarExists(star.Id)) return NotFound();
+                throw;
+            }
+            return RedirectToAction(nameof(Index));
+
         }
+
+
 
         // GET: Stars/Delete/5
         [Authorize(Roles = "Admin")]
@@ -188,7 +196,7 @@ namespace AstroFrameWeb.Controllers
             var star = await _context.Stars
                 .Include(s => s.Galaxy)
                 .Include(s => s.Owner)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(s => s.Id == id);
             if (star == null)
             {
                 return NotFound();
@@ -198,6 +206,7 @@ namespace AstroFrameWeb.Controllers
         }
 
         // POST: Stars/Delete/5
+        [Authorize(Roles = "Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -227,11 +236,7 @@ namespace AstroFrameWeb.Controllers
             if (!stars.Any())
                 return NotFound("No stars found.");
 
-            if (index < 0) 
-                index = 0;
-
-            if (index >= stars.Count)
-                index = stars.Count - 1;
+            index = Math.Clamp(index, 0, stars.Count - 1);
 
             var currentStar = stars[index];
 
@@ -254,13 +259,24 @@ namespace AstroFrameWeb.Controllers
             if (star.IsPurchased)
             {
                 TempData["BuyMessage"] = "Star already purchased.";
-                
+                return RedirectToAction("Index");
+
             }
             star.IsPurchased = true;
             star.OwnerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             await _context.SaveChangesAsync();
 
             return RedirectToAction("Index");
+        }
+
+
+        //helper
+        private void PopulateDropDownsHelper(int? galaxyId = null, int? starTypeId = null)
+        {
+           var galaxies = _context.Galaxies.AsNoTracking().ToList();
+           var starTypes = _context.StarTypes.AsNoTracking().ToList();
+            ViewBag.Galaxies = new SelectList(_context.Galaxies.AsNoTracking(), "Id", "Name", galaxyId);
+            ViewBag.StarTypes = new SelectList(_context.StarTypes.AsNoTracking(), "Id", "Name", starTypeId);
         }
     }
 }
