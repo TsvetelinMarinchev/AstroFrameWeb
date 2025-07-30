@@ -28,5 +28,14 @@ namespace AstroFrameWeb.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+
+
+        //testing 500 greshka
+
+        public IActionResult Crash()
+        {
+            throw new Exception("Simulated 500 error");
+        }
     }
 }
