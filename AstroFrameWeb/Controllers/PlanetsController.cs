@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using AstroFrameWeb.Data;
 using AstroFrameWeb.Data.Models;
 using Microsoft.AspNetCore.Authorization;
+using AstroFrameWeb.Data.Models.ViewModels;
+using System.Security.Claims;
 
 namespace AstroFrameWeb.Controllers
 {
@@ -90,31 +92,50 @@ namespace AstroFrameWeb.Controllers
         }
 
         // GET: Planets/Create
+        [Authorize]
         public IActionResult Create()
         {
-            ViewData["CreatorId"] = new SelectList(_context.Users, "Id", "Id");
-            ViewData["GalaxyId"] = new SelectList(_context.Galaxies, "Id", "Description");
-            ViewData["StarId"] = new SelectList(_context.Stars, "Id", "Description");
-            return View();
+            var viewModel = new PlanetCreateViewModel
+            {
+                Stars = _context.Stars.Select(s => new SelectListItem { Value = s.Id.ToString(), Text = s.Name }),
+                Galaxies = _context.Galaxies.Select(g => new SelectListItem { Value = g.Id.ToString(), Text = g.Name })
+            };
+            return View(viewModel);
         }
 
         // POST: Planets/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description,Mass,Radius,DistanceFromEarth,DiscoveredOn,StarId,GalaxyId,CreatorId")] Planet planet)
+        public async Task<IActionResult> Create(PlanetCreateViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                _context.Add(planet);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                model.Stars = _context.Stars.Select(s => new SelectListItem { Value = s.Id.ToString(), Text = s.Name });
+                model.Galaxies = _context.Galaxies.Select(g => new SelectListItem { Value = g.Id.ToString(), Text = g.Name });
+                return View(model);
             }
-            ViewData["CreatorId"] = new SelectList(_context.Users, "Id", "Id", planet.CreatorId);
-            ViewData["GalaxyId"] = new SelectList(_context.Galaxies, "Id", "Description", planet.GalaxyId);
-            ViewData["StarId"] = new SelectList(_context.Stars, "Id", "Description", planet.StarId);
-            return View(planet);
+
+            var planet = new Planet
+            {
+                Name = model.Name,
+                Description = model.Description,
+                Mass = model.Mass,
+                Radius = model.Radius,
+                DistanceFromEarth = model.DistanceFromEarth,
+                ImageUrl = model.ImageUrl,
+                StarId = model.StarId,
+                GalaxyId = model.GalaxyId,
+                DiscoveredOn = DateTime.UtcNow,
+                DiscoveredAgo = "Million years ago",
+                CreatorId = User.FindFirstValue(ClaimTypes.NameIdentifier)
+            };
+            _context.Planets.Add(planet);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Details", new { id = planet.Id });
         }
 
         // GET: Planets/Edit/5

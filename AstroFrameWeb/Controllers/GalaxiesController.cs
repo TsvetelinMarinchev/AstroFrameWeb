@@ -8,6 +8,9 @@ using Microsoft.EntityFrameworkCore;
 using AstroFrameWeb.Data;
 using AstroFrameWeb.Data.Models;
 using Microsoft.AspNetCore.Authorization;
+using AstroFrameWeb.Data.Models.ViewModels;
+using System.Security.Claims;
+using AstroFrameWeb.Data.Enums;
 
 namespace AstroFrameWeb.Controllers
 {
@@ -71,10 +74,21 @@ namespace AstroFrameWeb.Controllers
         }
 
         // GET: Galaxies/Create
+        [Authorize]
         public IActionResult Create()
         {
-            ViewData["CreatorId"] = new SelectList(_context.Users, "Id", "Id");
-            return View();
+
+            var galaxyTypes = Enum.GetValues(typeof(GalaxyType))
+                             .Cast<GalaxyType>()
+                             .Select(g => new SelectListItem
+                             {
+                                 Value = ((int)g).ToString(),
+                                 Text = g.ToString()
+                             }).ToList();
+
+            ViewBag.GalaxyTypes = galaxyTypes;
+
+            return View(new GalaxyCreateViewModel());
         }
 
         // POST: Galaxies/Create
@@ -82,16 +96,27 @@ namespace AstroFrameWeb.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description,GalaxyType,NumberOfStars,DistanceFromEarth,DiscoveredOn,CreatorId")] Galaxy galaxy)
+        [Authorize]
+        public async Task<IActionResult> Create(GalaxyCreateViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var galaxy = new Galaxy
             {
-                _context.Add(galaxy);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["CreatorId"] = new SelectList(_context.Users, "Id", "Id", galaxy.CreatorId);
-            return View(galaxy);
+                Name = model.Name,
+                Description = model.Description,
+                NumberOfStars = model.NumberOfStars,
+                DistanceFromEarth = model.DistanceFromEarth,
+                GalaxyType = model.GalaxyType,
+                ImageUrl = model.ImageUrl,
+                DiscoveredOn = DateTime.UtcNow,
+                DiscoveredAgo = "Billion years ago",
+                CreatorId = User.FindFirstValue(ClaimTypes.NameIdentifier)
+            };
+            _context.Galaxies.Add(galaxy);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index");
         }
 
         // GET: Galaxies/Edit/5
@@ -109,7 +134,8 @@ namespace AstroFrameWeb.Controllers
                 return NotFound();
             }
             ViewData["CreatorId"] = new SelectList(_context.Users, "Id", "Id", galaxy.CreatorId);
-            return View(galaxy);
+            ViewData["GalaxyTypes"] = new SelectList(Enum.GetValues(typeof(GalaxyType)));
+            return View(new GalaxyCreateViewModel());
         }
 
         // POST: Galaxies/Edit/5

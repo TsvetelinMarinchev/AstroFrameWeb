@@ -1,70 +1,99 @@
-﻿@model AstroFrameWeb.Data.Models.Planet
+﻿@model AstroFrameWeb.Data.Models.ViewModels.PlanetCreateViewModel
 
 @{
     ViewData["Title"] = "Create";
 }
 
 <h1>Create</h1>
-
 <h4>Planet</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-6">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="Description" class="control-label"></label>
                 <input asp-for="Description" class="form-control" />
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="Mass" class="control-label"></label>
                 <input asp-for="Mass" class="form-control" />
                 <span asp-validation-for="Mass" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="Radius" class="control-label"></label>
                 <input asp-for="Radius" class="form-control" />
                 <span asp-validation-for="Radius" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="DistanceFromEarth" class="control-label"></label>
                 <input asp-for="DistanceFromEarth" class="form-control" />
                 <span asp-validation-for="DistanceFromEarth" class="text-danger"></span>
             </div>
+
             <div class="form-group">
-                <label asp-for="DiscoveredOn" class="control-label"></label>
-                <input asp-for="DiscoveredOn" class="form-control" />
-                <span asp-validation-for="DiscoveredOn" class="text-danger"></span>
+                <label asp-for="GalaxyId" class="control-label">Galaxy</label>
+                <select asp-for="GalaxyId" class="form-control" asp-items="Model.Galaxies">
+                    <option value="">-- Избери галактика --</option>
+                </select>
+                <span asp-validation-for="GalaxyId" class="text-danger"></span>
             </div>
+
             <div class="form-group">
-                <label asp-for="StarId" class="control-label"></label>
-                <select asp-for="StarId" class ="form-control" asp-items="ViewBag.StarId"></select>
+                <label asp-for="StarId" class="control-label">Star</label>
+                <select asp-for="StarId" class="form-control" asp-items="Model.Stars">
+                    <option value="">-- Избери звезда --</option>
+                </select>
+                <span asp-validation-for="StarId" class="text-danger"></span>
             </div>
+
             <div class="form-group">
-                <label asp-for="GalaxyId" class="control-label"></label>
-                <select asp-for="GalaxyId" class ="form-control" asp-items="ViewBag.GalaxyId"></select>
+                <label asp-for="ImageUrl" class="control-label">Image URL</label>
+                <input asp-for="ImageUrl" class="form-control" id="imageUrlInput" placeholder="https://example.com/image.jpg" />
+                <span asp-validation-for="ImageUrl" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="CreatorId" class="control-label"></label>
-                <select asp-for="CreatorId" class ="form-control" asp-items="ViewBag.CreatorId"></select>
+
+            <div class="form-group text-center mt-3">
+                <img id="imagePreview" src="" alt="Preview" style="max-width: 300px; display: none; border-radius: 10px; box-shadow: 0 0 10px cyan;" />
             </div>
-            <div class="form-group">
+
+            <div class="form-group mt-3">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>
+
+        <div class="mt-3">
+            <a asp-action="Index">Back to List</a>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        document.getElementById("imageUrlInput").addEventListener("input", function () {
+            const url = this.value;
+            const img = document.getElementById("imagePreview");
+            if (url && url.startsWith("http")) {
+                img.src = url;
+                img.style.display = "block";
+            } else {
+                img.style.display = "none";
+            }
+        });
+    </script>
 }

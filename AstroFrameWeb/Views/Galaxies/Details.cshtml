@@ -1,7 +1,12 @@
 ﻿@model AstroFrameWeb.Data.Models.Galaxy
+@using System.Security.Claims
 
 @{
     ViewData["Title"] = "Details";
+
+    var user = Context.User;
+    var isAdmin = user.IsInRole("Admin");
+    var userId = user.Identity.IsAuthenticated ? user.FindFirst(ClaimTypes.NameIdentifier).Value : null;
 }
 
 <h1>Details</h1>
@@ -10,51 +15,39 @@
     <h4>Galaxy</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.GalaxyType)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.GalaxyType)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.NumberOfStars)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.NumberOfStars)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DistanceFromEarth)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DistanceFromEarth)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DiscoveredOn)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DiscoveredOn)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Creator)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Creator.Id)
-        </dd>
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.Name)</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Name)</dd>
+
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.Description)</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Description)</dd>
+
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.GalaxyType)</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.GalaxyType)</dd>
+
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.NumberOfStars)</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.NumberOfStars)</dd>
+
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.DistanceFromEarth)</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.DistanceFromEarth)</dd>
+
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.DiscoveredOn)</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.DiscoveredOn)</dd>
+
+        <dt class="col-sm-2">Created by</dt>
+        <dd class="col-sm-10">@Model.Creator?.Email</dd>
     </dl>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+
+@if (isAdmin || Model.CreatorId == userId)
+{
+    <div>
+        <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+        <a asp-action="Index">Back to List</a>
+    </div>
+}
+else
+{
+    <div>
+        <a asp-action="Index">Back to List</a>
+    </div>
+}

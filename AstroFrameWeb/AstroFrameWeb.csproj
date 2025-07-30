@@ -4,6 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+	  <LangVersion>latest</LangVersion>
     <UserSecretsId>aspnet-AstroFrameWeb-f960b352-7c7d-4801-a7ff-01eaf5cd021d</UserSecretsId>
   </PropertyGroup>
 

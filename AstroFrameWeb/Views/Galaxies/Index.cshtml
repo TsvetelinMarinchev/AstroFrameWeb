@@ -1,7 +1,16 @@
 ﻿@model AstroFrameWeb.Data.Models.Galaxy
-
 @{
     ViewData["Title"] = "Galaxy View";
+}
+@{
+    var imageUrl = Model.ImageUrl;
+
+    bool isExternal = !string.IsNullOrEmpty(imageUrl) &&
+                      (imageUrl.StartsWith("http://") || imageUrl.StartsWith("https://"));
+
+    string finalUrl = isExternal
+        ? imageUrl
+        : Url.Content("~/images/" + imageUrl);
 }
 <style>
     body {
@@ -53,7 +62,12 @@
     </div>
 </form>
 <div class="text-center">
-    <img src="@Url.Content("~/images/" + Model.ImageUrl)" alt="@Model.Name" class="galaxy-img" />
+    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+    {
+        <div class="text-center">
+            <img src="@finalUrl" alt="@Model.Name" class="galaxy-img" />
+        </div>
+    }
 </div>
 
 <div class="container galaxy-card text-center">
@@ -61,7 +75,7 @@
     <p><strong>Type:</strong> @Model.GalaxyType</p>
     <p><strong>Stars:</strong> @Model.NumberOfStars</p>
     <p><strong>Distance:</strong> @Model.DistanceFromEarth light years</p>
-    <p><strong>Discovered:</strong> @Model.DiscoveredAgo</p>
+    
 </div>
 <div class="mt-4 d-flex justify-content-between">
     <a class="btn btn-nav"

@@ -3,6 +3,16 @@
 @{
     ViewData["Title"] = "Planet View";
 }
+@{
+    var imageUrl = Model.ImageUrl;
+
+    bool isExternal = !string.IsNullOrEmpty(imageUrl) &&
+                      (imageUrl.StartsWith("http://") || imageUrl.StartsWith("https://"));
+
+    string finalUrl = isExternal
+        ? imageUrl
+        : Url.Content("~/images/" + imageUrl);
+}
 
 <style>
     body {
@@ -49,7 +59,7 @@
 </form>
 
 <div class="text-center">
-    <img src="@Url.Content("~/images/" + Model.ImageUrl)" alt="@Model.Name" class="planet-img" />
+    <img src="@finalUrl" alt="@Model.Name" class="planet-img" />
 </div>
 
 <div class="container planet-card text-center">
