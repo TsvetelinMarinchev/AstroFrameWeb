@@ -44,5 +44,61 @@ namespace AstroFrameWeb.Common
 
         }
 
+        public static class GalaxyCreateViewModel
+        {
+
+            public const int NameMinLenghtGalaxyCreateViewModel = 1;
+            public const int NameMaxLenghtGalaxyCreateViewModel = 100;
+            public const string ErrorMessage = "Name must be under 100 characters";
+
+
+            public const int DescriptionMinLenghtGalaxyCreateViewModel = 1;
+            public const int DescriptionMaxLenghtGalaxyCreateViewModel = 100;
+            public const string ErrorMessageDis = "Description must be under 100 characters";
+
+
+            public const int NumberOfStarsMinLenghtGalaxyCreateViewModel = 1;
+            public const int NumberOfStarsMaxLenghtGalaxyCreateViewModel = 10000000;
+            public const string ErrorMessageNumberOfStars = "Number of stars must be greater than 0";
+
+
+
+            public const int GalaxyTypeMinLenghtGalaxyCreateViewModel = 1;
+            public const int GalaxyTypeMaxLenghtGalaxyCreateViewModel = 75;
+            public const string ErrorMessageGalaxyType = "GalaxyType must be under 75 characters";
+
+
+         
+
+
+
+        }
+        /*
+
+    {
+        [Required]
+        public string Name { get; set; } = null!;
+
+        [Required]
+        public string Description { get; set; } = null!;
+
+        [Required]
+        public GalaxyType GalaxyType { get; set; }
+
+        [Required]
+        [Range(1, 100000)]
+        public int NumberOfStars { get; set; }
+
+        [Required]
+        [Range(0.1, 1000000)]
+        public double DistanceFromEarth { get; set; }
+        public string? ImageUrl { get; set; }
+    }
+}
+
+
+         * *
+         */
+
     }
 }
