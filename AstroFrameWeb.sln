@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AstroFrameWeb.ViewModels", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AstroFrameWeb.Common", "AstroFrameWeb.Common\AstroFrameWeb.Common.csproj", "{215B8AF2-6011-4101-B8E8-15738CC30F9F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AstroFrameWeb.Tests", "AstroFrameWeb.Tests\AstroFrameWeb.Tests.csproj", "{954DEF2B-2383-4937-8C8A-E89C22DF06B3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{215B8AF2-6011-4101-B8E8-15738CC30F9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{215B8AF2-6011-4101-B8E8-15738CC30F9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{215B8AF2-6011-4101-B8E8-15738CC30F9F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{954DEF2B-2383-4937-8C8A-E89C22DF06B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{954DEF2B-2383-4937-8C8A-E89C22DF06B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{954DEF2B-2383-4937-8C8A-E89C22DF06B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{954DEF2B-2383-4937-8C8A-E89C22DF06B3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

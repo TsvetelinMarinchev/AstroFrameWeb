@@ -30,6 +30,8 @@ builder.Services.AddRazorPages();
 
 builder.Services.AddSingleton<IEmailSender, DummyEmailSender>();
 builder.Services.AddMvc();
+builder.Services.AddScoped<IGalaxyService, GalaxyService>();
+
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
