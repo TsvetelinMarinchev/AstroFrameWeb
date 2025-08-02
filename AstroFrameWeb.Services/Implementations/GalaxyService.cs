@@ -20,7 +20,22 @@ namespace AstroFrameWeb.Services.Implementations
         }
         public async Task CreateGalaxyAsync(GalaxyCreateViewModel model, string userId)
         {
-            var galaxy = new Galaxy
+            if (string.IsNullOrWhiteSpace(model.Name)
+                       || model.NumberOfStars <= 0
+                       || model.DistanceFromEarth <= 0
+                       || !Uri.IsWellFormedUriString(model.ImageUrl, UriKind.Absolute))//dali e validen Url
+            {
+                return;
+            }
+                if (string.IsNullOrWhiteSpace(model.Name))
+            {
+                return;
+            }
+            //if (string.IsNullOrWhiteSpace(model.Name) || model.NumberOfStars <= 0)
+            //{
+            //    return;
+            //}
+                var galaxy = new Galaxy
             {
                 Name = model.Name,
                 Description = model.Description,

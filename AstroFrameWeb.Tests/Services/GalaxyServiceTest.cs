@@ -43,6 +43,108 @@ namespace AstroFrameWeb.Tests.Services
             Assert.Equal(1000000, galaxy.NumberOfStars);
         }
 
+        [Fact]
+        public async Task CreateGalaxyToTheDatabaseWhenNameIsMissing()
+        {
+            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+                        .UseInMemoryDatabase(databaseName: "InvalidGalaxyDb")
+                        .Options;
+
+
+            var context = new ApplicationDbContext(options);
+            var galaxyService = new GalaxyService(context);
+
+            var model = new GalaxyCreateViewModel
+            {
+                //bez Name // testing
+                Description = "Galaxy with no name",
+                GalaxyType = GalaxyType.Irregular,
+                NumberOfStars = 12345,
+                DistanceFromEarth = 1500000,
+                ImageUrl = "https://example.com/image.png"
+            };
+            await galaxyService.CreateGalaxyAsync(model, "test-user");
+
+            var count = context.Galaxies.Count();
+            Assert.Equal(0, count);
+        }
+
+        [Fact]
+        public async Task CreateGalaxySholdNotSavedWhenTheNumberOfStarsIsZero()
+        {
+
+            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+                           .UseInMemoryDatabase("StarsInvalid")
+                           .Options;
+            var context = new ApplicationDbContext(options);
+            var galaxyService = new GalaxyService(context);
+
+            var model = new GalaxyCreateViewModel
+            {
+                Name = "Ghost Galaxy",
+                Description = "Invisible galaxy",
+                GalaxyType = GalaxyType.Irregular,
+                NumberOfStars = 0,
+                DistanceFromEarth = 500000,
+                ImageUrl = "https://ghost.com/img.png"
+            };
+            await galaxyService.CreateGalaxyAsync(model, "test-user");
+
+            var count = context.Galaxies.Count();
+            Assert.Equal(0, count);
+        }
+
+
+        [Fact]
+        public async Task CreateGalaxyShouldNotSaveWhenDistanceIsNegativeOrZero()
+        {
+            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+                       .UseInMemoryDatabase(databaseName: "Galaxy_InvalidDistance")
+                       .Options;
+
+            var context = new ApplicationDbContext(options);
+            var galaxyService = new GalaxyService(context);
+
+            var model = new GalaxyCreateViewModel
+            {
+                Name = "Dark Void",
+                Description = "A galaxy with suspicious distance",
+                GalaxyType = GalaxyType.Irregular,
+                NumberOfStars = 9999,
+                DistanceFromEarth = -1000,
+                ImageUrl = "https://darkvoid.com/image.png"
+            };
+
+            await galaxyService.CreateGalaxyAsync(model, "test-user");
+
+            var count = context.Galaxies.Count();
+            Assert.Equal(0, count);
+        }
+
+        [Fact]
+        public async Task CreateGalaxyShouldNotSaveWhenImageUrlIsInvalid()
+        {
+            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+                      .UseInMemoryDatabase(databaseName: "Galaxy_InvalidUrl")
+                      .Options;
+
+            var context = new ApplicationDbContext(options);
+            var galaxyService = new GalaxyService(context);
+
+            var model = new GalaxyCreateViewModel
+            {
+                Name = "Glitchy Galaxy",
+                Description = "A mysterious object",
+                GalaxyType = GalaxyType.Irregular,
+                NumberOfStars = 1000,
+                DistanceFromEarth = 12345,
+                ImageUrl = "not-a-url"
+            };
+            await galaxyService.CreateGalaxyAsync(model, "test-user");
+
+            var count = context.Galaxies.Count();
+            Assert.Equal(0, count);
+        }
 
     }
 }
