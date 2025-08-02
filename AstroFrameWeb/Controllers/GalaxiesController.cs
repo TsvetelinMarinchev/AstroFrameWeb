@@ -29,6 +29,7 @@ namespace AstroFrameWeb.Controllers
         //    var applicationDbContext = _context.Galaxies.Include(g => g.Creator);
         //    return View(await applicationDbContext.ToListAsync());
         //}
+        [AllowAnonymous]
         public IActionResult Index(string searchStr, int index = 0)
         {
             var galaxies = _context.Galaxies
@@ -55,6 +56,7 @@ namespace AstroFrameWeb.Controllers
         }
 
         // GET: Galaxies/Details/5
+        [AllowAnonymous]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -120,7 +122,7 @@ namespace AstroFrameWeb.Controllers
         }
 
         // GET: Galaxies/Edit/5
-        [Authorize(Roles = "Admin")]
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -133,6 +135,11 @@ namespace AstroFrameWeb.Controllers
             {
                 return NotFound();
             }
+            //user
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var isAdmin = User.IsInRole("Admin");
+            if (!isAdmin && galaxy.CreatorId != currentUserId)
+                return Forbid();
             ViewData["CreatorId"] = new SelectList(_context.Users, "Id", "Id", galaxy.CreatorId);
             ViewData["GalaxyTypes"] = new SelectList(Enum.GetValues(typeof(GalaxyType)));
             return View(new GalaxyCreateViewModel());
@@ -143,8 +150,17 @@ namespace AstroFrameWeb.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,GalaxyType,NumberOfStars,DistanceFromEarth,DiscoveredOn,CreatorId")] Galaxy galaxy)
         {
+            var existingGalaxy = await _context.Galaxies.FindAsync(id);
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var isAdmin = User.IsInRole("Admin");
+
+            if (existingGalaxy == null || (!isAdmin && existingGalaxy.CreatorId != currentUserId))
+
+                return Forbid();
+
             if (id != galaxy.Id)
             {
                 return NotFound();
@@ -175,7 +191,7 @@ namespace AstroFrameWeb.Controllers
         }
 
         // GET: Galaxies/Delete/5
-        [Authorize(Roles = "Admin")]
+        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -187,9 +203,11 @@ namespace AstroFrameWeb.Controllers
                 .Include(g => g.Creator)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (galaxy == null)
-            {
                 return NotFound();
-            }
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var isAdmin = User.IsInRole("Admin");
+            if (!isAdmin && galaxy.CreatorId != currentUserId)
+                return Forbid();
 
             return View(galaxy);
         }
@@ -197,14 +215,23 @@ namespace AstroFrameWeb.Controllers
         // POST: Galaxies/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var galaxy = await _context.Galaxies.FindAsync(id);
-            if (galaxy != null)
+            if (galaxy == null)
             {
-                _context.Galaxies.Remove(galaxy);
+                return NotFound();
             }
 
+
+            var currentUserId =
+                User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var isAdmin = User.IsInRole("Admin");
+            if (!isAdmin && galaxy.CreatorId != currentUserId)
+                return Forbid();
+
+            _context.Galaxies.Remove(galaxy);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
