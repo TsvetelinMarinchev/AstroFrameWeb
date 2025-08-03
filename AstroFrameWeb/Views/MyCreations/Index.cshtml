@@ -15,6 +15,7 @@ else
                 <th>Galaxy</th>
                 <th>Type</th>
                 <th>Price</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -25,6 +26,10 @@ else
                     <td>@star.Galaxy?.Name</td>
                     <td>@star.StarType?.Name</td>
                     <td>$@star.Price</td>
+                    <td>
+                        <a asp-controller="Stars" asp-action="Edit" asp-route-id="@star.Id" class="btn btn-sm btn-warning">Edit</a>
+                        <a asp-controller="Stars" asp-action="Delete" asp-route-id="@star.Id" class="btn btn-sm btn-danger">Delete</a>
+                    </td>
                 </tr>
             }
         </tbody>
@@ -45,6 +50,7 @@ else
                 <th>Galaxy</th>
                 <th>Star</th>
                 <th>Mass</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -55,6 +61,10 @@ else
                     <td>@planet.Galaxy?.Name</td>
                     <td>@planet.Star?.Name</td>
                     <td>@planet.Mass</td>
+                    <td>
+                        <a asp-controller="Planets" asp-action="Edit" asp-route-id="@planet.Id" class="btn btn-sm btn-warning">Edit</a>
+                        <a asp-controller="Planets" asp-action="Delete" asp-route-id="@planet.Id" class="btn btn-sm btn-danger">Delete</a>
+                    </td>
                 </tr>
             }
         </tbody>
@@ -75,6 +85,7 @@ else
                 <th>Type</th>
                 <th>Stars</th>
                 <th>Distance</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -85,6 +96,10 @@ else
                     <td>@galaxy.GalaxyType</td>
                     <td>@galaxy.NumberOfStars</td>
                     <td>@galaxy.DistanceFromEarth ly</td>
+                    <td>
+                        <a asp-controller="Galaxies" asp-action="Edit" asp-route-id="@galaxy.Id" class="btn btn-sm btn-warning">Edit</a>
+                        <a asp-controller="Galaxies" asp-action="Delete" asp-route-id="@galaxy.Id" class="btn btn-sm btn-danger">Delete</a>
+                    </td>
                 </tr>
             }
         </tbody>
