@@ -273,18 +273,18 @@ namespace AstroFrameWeb.Controllers
         }
 
         //my stars
-        [Authorize]
-        public IActionResult MyStars()
-        {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var stars = _context.Stars
-                .Where(s => s.OwnerId == userId)
-                .Include(s => s.Galaxy)
-                .Include(s => s.StarType)
-                .ToList();
+        //[Authorize]
+        //public IActionResult MyStars()
+        //{
+        //    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        //    var stars = _context.Stars
+        //        .Where(s => s.OwnerId == userId)
+        //        .Include(s => s.Galaxy)
+        //        .Include(s => s.StarType)
+        //        .ToList();
 
-            return View("MyStars", stars);
-        }
+        //    return View("MyStars", stars);
+        //}
 
         //helper
         private void PopulateDropDownsHelper(int? galaxyId = null, int? starTypeId = null)

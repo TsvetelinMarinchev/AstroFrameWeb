@@ -1,4 +1,4 @@
-﻿@model List<AstroFrameWeb.Data.Models.Star>
+﻿@*@model List<AstroFrameWeb.Data.Models.Star>
 
 @{
     ViewData["Title"] = "My Stars";
@@ -12,7 +12,7 @@
 }
 else
 {
-    <table class="table table-hover text-white bg-dark">
+    <table class="table text-white bg-dark">
         <thead>
             <tr>
                 <th>Name</th>
@@ -27,7 +27,11 @@ else
             @foreach (var star in Model)
             {
                 <tr>
-                    <td>@star.Name</td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@star.Id" class="text-decoration-none text-white">
+                            @star.Name
+                        </a>
+                    </td>
                     <td>@star.Galaxy?.Name</td>
                     <td>@star.StarType?.Name</td>
                     <td>$@star.Price</td>
@@ -41,3 +45,4 @@ else
         </tbody>
     </table>
 }
+@**@
