@@ -1,0 +1,43 @@
+﻿@model List<AstroFrameWeb.Data.Models.Star>
+
+@{
+    ViewData["Title"] = "My Stars";
+}
+
+<h2 class="text-center"> My Stars </h2>
+
+@if (Model.Count == 0)
+{
+    <div class="alert alert-info text-center mt-4">You have not created any stars yet.</div>
+}
+else
+{
+    <table class="table table-hover text-white bg-dark">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Galaxy</th>
+                <th>Star Type</th>
+                <th>Price</th>
+                <th>Purchased</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var star in Model)
+            {
+                <tr>
+                    <td>@star.Name</td>
+                    <td>@star.Galaxy?.Name</td>
+                    <td>@star.StarType?.Name</td>
+                    <td>$@star.Price</td>
+                    <td>@(star.IsPurchased ? "Yes" : "No")</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@star.Id" class="btn btn-sm btn-warning">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@star.Id" class="btn btn-sm btn-danger">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
