@@ -40,8 +40,7 @@ namespace AstroFrameWeb.Controllers
             if (!planets.Any())
                 return NotFound("No planets found.");
 
-            if (index < 0) index = 0;
-            if (index >= planets.Count) index = planets.Count - 1;
+            index = Math.Clamp(index, 0, planets.Count - 1);
 
             var current = planets[index];
             ViewBag.Index = index;
@@ -60,8 +59,7 @@ namespace AstroFrameWeb.Controllers
             if (!planets.Any())
                 return NotFound("No planets found.");
 
-            if (index < 0) index = 0;
-            if (index >= planets.Count) index = planets.Count - 1;
+            index = Math.Clamp(index, 0, planets.Count - 1);
 
             var current = planets[index];
             ViewBag.Index = index;
@@ -139,7 +137,7 @@ namespace AstroFrameWeb.Controllers
         }
 
         // GET: Planets/Edit/5
-        [Authorize(Roles = "Admin")]
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -152,6 +150,12 @@ namespace AstroFrameWeb.Controllers
             {
                 return NotFound();
             }
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var isAdmin = User.IsInRole("Admin");
+
+            if (!isAdmin && planet.CreatorId != userId) return Forbid();
+
+
             ViewData["CreatorId"] = new SelectList(_context.Users, "Id", "Id", planet.CreatorId);
             ViewData["GalaxyId"] = new SelectList(_context.Galaxies, "Id", "Description", planet.GalaxyId);
             ViewData["StarId"] = new SelectList(_context.Stars, "Id", "Description", planet.StarId);
@@ -163,31 +167,23 @@ namespace AstroFrameWeb.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Mass,Radius,DistanceFromEarth,DiscoveredOn,StarId,GalaxyId,CreatorId")] Planet planet)
         {
-            if (id != planet.Id)
-            {
-                return NotFound();
-            }
+            var existingPlanet = await _context.Planets.FindAsync(id);
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var isAdmin = User.IsInRole("Admin");
+
+            if (existingPlanet == null || (!isAdmin && existingPlanet.CreatorId != userId)) return Forbid();
+
+            if (id != planet.Id) return NotFound();
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(planet);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!PlanetExists(planet.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                _context.Entry(existingPlanet).CurrentValues.SetValues(planet);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             ViewData["CreatorId"] = new SelectList(_context.Users, "Id", "Id", planet.CreatorId);
@@ -197,14 +193,13 @@ namespace AstroFrameWeb.Controllers
         }
 
         // GET: Planets/Delete/5
-        [Authorize(Roles = "Admin")]
+        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
-
             var planet = await _context.Planets
                 .Include(p => p.Creator)
                 .Include(p => p.Galaxy)
@@ -214,6 +209,9 @@ namespace AstroFrameWeb.Controllers
             {
                 return NotFound();
             }
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var isAdmin = User.IsInRole("Admin");
+            if (!isAdmin && planet.CreatorId != userId) return Forbid();
 
             return View(planet);
         }
@@ -221,13 +219,16 @@ namespace AstroFrameWeb.Controllers
         // POST: Planets/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var planet = await _context.Planets.FindAsync(id);
-            if (planet != null)
-            {
-                _context.Planets.Remove(planet);
-            }
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var isAdmin = User.IsInRole("Admin");
+
+            if (planet == null || (!isAdmin && planet.CreatorId != userId)) return Forbid();
+
+            _context.Planets.Remove(planet);
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
