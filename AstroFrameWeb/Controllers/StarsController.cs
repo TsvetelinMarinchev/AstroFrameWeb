@@ -121,7 +121,7 @@ namespace AstroFrameWeb.Controllers
         }
 
         // GET: Stars/Edit/5
-        [Authorize(Roles = "Admin")]
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -139,7 +139,7 @@ namespace AstroFrameWeb.Controllers
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var isAdmin = User.IsInRole("Admin");
 
-            if (star.OwnerId != userId && !isAdmin)
+            if (!isAdmin && star.OwnerId != userId)
             {
                 return Forbid();
             }
@@ -152,41 +152,35 @@ namespace AstroFrameWeb.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-
+        [Authorize]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Price,IsPurchased,CreatedOn,OwnerId,GalaxyId,StarTypeId,ImageUrl")] Star star)
         {
+            var existingStar = await _context.Stars.FindAsync(id);
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var isAdmin = User.IsInRole("Admin");
+
+            if (existingStar == null || (!isAdmin && existingStar.OwnerId != userId)) return Forbid();
             if (id != star.Id) return NotFound();
 
             if (!ModelState.IsValid)
             {
-                if (ViewData["GalaxyId"] == null)
-                    ViewData["GalaxyId"] = new SelectList(_context.Galaxies, "Id", "Name", star.GalaxyId);
-
-                if (ViewData["StarTypeId"] == null)
-                    ViewData["StarTypeId"] = new SelectList(_context.StarTypes, "Id", "Name", star.StarTypeId);
-
+                PopulateDropDownsHelper(star.GalaxyId, star.StarTypeId);
                 return View(star);
             }
-            try
+            _context.Entry(existingStar).CurrentValues.SetValues(star);
 
-            {
-                _context.Update(star);
-                await _context.SaveChangesAsync();
-
-           }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!StarExists(star.Id)) return NotFound();
-                throw;
-            }
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+
 
         }
 
 
 
         // GET: Stars/Delete/5
-        [Authorize(Roles = "Admin")]
+        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -202,21 +196,29 @@ namespace AstroFrameWeb.Controllers
             {
                 return NotFound();
             }
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var isAdmin = User.IsInRole("Admin");
+
+            if (!isAdmin && star.OwnerId != userId) return Forbid();
 
             return View(star);
         }
 
         // POST: Stars/Delete/5
-        [Authorize(Roles = "Admin")]
+        [Authorize]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var star = await _context.Stars.FindAsync(id);
-            if (star != null)
-            {
-                _context.Stars.Remove(star);
-            }
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var isAdmin = User.IsInRole("Admin");
+
+            if (star == null || (!isAdmin && star.OwnerId != userId)) return Forbid();
+
+            _context.Stars.Remove(star);
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
