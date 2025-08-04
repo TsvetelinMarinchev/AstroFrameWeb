@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace AstroFrameWeb.Data.Models
 {
@@ -63,6 +64,7 @@ namespace AstroFrameWeb.Data.Models
         [ForeignKey(nameof(StarId))]
         [Display(Name = "Star")]
         [Comment("The star this planet orbits")]
+        [ValidateNever]
         public Star Star { get; set; } = null!;
 
         
@@ -73,6 +75,7 @@ namespace AstroFrameWeb.Data.Models
         [ForeignKey(nameof(GalaxyId))]
         [Display(Name = "Galaxy")]
         [Comment("The galaxy this planet belongs to")]
+        [ValidateNever]
         public Galaxy? Galaxy { get; set; }
 
         
@@ -82,13 +85,15 @@ namespace AstroFrameWeb.Data.Models
 
         [ForeignKey(nameof(CreatorId))]
         [Display(Name = "Creator")]
+        [ValidateNever]
         public ApplicationUser? Creator { get; set; }
 
-
+        [ValidateNever]
         public ICollection<UserFavoritePlanet> FavoritedByUsers { get; set; }
               = new HashSet<UserFavoritePlanet>();
 
         [Comment("Comments on the planet")]
+        [ValidateNever]
         public ICollection<PlanetComment> Comments { get; set; }
             = new HashSet<PlanetComment>();
     }

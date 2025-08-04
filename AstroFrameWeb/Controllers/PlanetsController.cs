@@ -168,28 +168,35 @@ namespace AstroFrameWeb.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Mass,Radius,DistanceFromEarth,DiscoveredOn,StarId,GalaxyId,CreatorId")] Planet planet)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Mass,Radius,DistanceFromEarth," +
+            "DiscoveredOn,ImageUrl,StarId,GalaxyId,CreatorId")] Planet updated)
         {
-            var existingPlanet = await _context.Planets.FindAsync(id);
-
+            var existing = await _context.Planets.FindAsync(id);
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
             var isAdmin = User.IsInRole("Admin");
+            if (!isAdmin && existing.CreatorId != userId)
+                return Forbid();
 
-            if (existingPlanet == null || (!isAdmin && existingPlanet.CreatorId != userId)) return Forbid();
-
-            if (id != planet.Id) return NotFound();
-
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                _context.Entry(existingPlanet).CurrentValues.SetValues(planet);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                ViewBag.StarId = new SelectList(_context.Stars, "Id", "Name", updated.StarId);
+                ViewBag.GalaxyId = new SelectList(_context.Galaxies, "Id", "Name", updated.GalaxyId);
+                return View(updated);
             }
-            ViewData["CreatorId"] = new SelectList(_context.Users, "Id", "Id", planet.CreatorId);
-            ViewData["GalaxyId"] = new SelectList(_context.Galaxies, "Id", "Description", planet.GalaxyId);
-            ViewData["StarId"] = new SelectList(_context.Stars, "Id", "Description", planet.StarId);
-            return View(planet);
+            existing.Name = updated.Name;
+            existing.Description = updated.Description;
+            existing.Mass = updated.Mass;
+            existing.Radius = updated.Radius;
+            existing.DistanceFromEarth = updated.DistanceFromEarth;
+            existing.DiscoveredOn = updated.DiscoveredOn;
+            existing.ImageUrl = updated.ImageUrl;
+            existing.StarId = updated.StarId;
+            existing.GalaxyId = updated.GalaxyId;
+
+            _context.Entry(existing).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Details), new { id = existing.Id });
         }
 
         // GET: Planets/Delete/5

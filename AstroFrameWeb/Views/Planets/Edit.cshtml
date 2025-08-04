@@ -6,68 +6,72 @@
 
 <h1>Edit</h1>
 
-<h4>Planet</h4>
 <hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Mass" class="control-label"></label>
-                <input asp-for="Mass" class="form-control" />
-                <span asp-validation-for="Mass" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Radius" class="control-label"></label>
-                <input asp-for="Radius" class="form-control" />
-                <span asp-validation-for="Radius" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DistanceFromEarth" class="control-label"></label>
-                <input asp-for="DistanceFromEarth" class="form-control" />
-                <span asp-validation-for="DistanceFromEarth" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DiscoveredOn" class="control-label"></label>
-                <input asp-for="DiscoveredOn" class="form-control" />
-                <span asp-validation-for="DiscoveredOn" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="StarId" class="control-label"></label>
-                <select asp-for="StarId" class="form-control" asp-items="ViewBag.StarId"></select>
-                <span asp-validation-for="StarId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="GalaxyId" class="control-label"></label>
-                <select asp-for="GalaxyId" class="form-control" asp-items="ViewBag.GalaxyId"></select>
-                <span asp-validation-for="GalaxyId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CreatorId" class="control-label"></label>
-                <select asp-for="CreatorId" class="form-control" asp-items="ViewBag.CreatorId"></select>
-                <span asp-validation-for="CreatorId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
+<form asp-action="Edit" method="post">
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="CreatorId" />
+
+    <div class="form-group">
+        <label asp-for="Name"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Description"></label>
+        <input asp-for="Description" class="form-control" />
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Mass"></label>
+        <input asp-for="Mass" class="form-control" />
+        <span asp-validation-for="Mass" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Radius"></label>
+        <input asp-for="Radius" class="form-control" />
+        <span asp-validation-for="Radius" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="DistanceFromEarth"></label>
+        <input asp-for="DistanceFromEarth" class="form-control" />
+        <span asp-validation-for="DistanceFromEarth" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="DiscoveredOn"></label>
+        <input asp-for="DiscoveredOn" class="form-control" />
+        <span asp-validation-for="DiscoveredOn" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="ImageUrl"></label>
+        <input asp-for="ImageUrl" class="form-control" />
+        <span asp-validation-for="ImageUrl" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="StarId"></label>
+        <select asp-for="StarId" class="form-control" asp-items="ViewBag.StarId"></select>
+        <span asp-validation-for="StarId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="GalaxyId"></label>
+        <select asp-for="GalaxyId" class="form-control" asp-items="ViewBag.GalaxyId"></select>
+        <span asp-validation-for="GalaxyId" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-3">Save</button>
+</form>
+
+<a asp-action="Index" class="btn btn-secondary mt-2">Back to List</a>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
