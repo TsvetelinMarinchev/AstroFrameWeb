@@ -1,4 +1,5 @@
 ﻿using AstroFrameWeb.Data.Enums;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -7,6 +8,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace AstroFrameWeb.Data.Models
 {
@@ -62,9 +64,11 @@ namespace AstroFrameWeb.Data.Models
         [ForeignKey(nameof(CreatorId))]
         [Display(Name = "Creator")]
         [Comment("Navigation property to the creator")]
+        [ValidateNever]
         public ApplicationUser? Creator { get; set; }
 
         [Comment("Stars that belong to this Galaxy")]
+        [ValidateNever]
         public ICollection<Star> Stars { get; set; } 
             = new HashSet<Star>();
     }

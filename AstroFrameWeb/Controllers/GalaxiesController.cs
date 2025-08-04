@@ -140,9 +140,15 @@ namespace AstroFrameWeb.Controllers
             var isAdmin = User.IsInRole("Admin");
             if (!isAdmin && galaxy.CreatorId != currentUserId)
                 return Forbid();
-            ViewData["CreatorId"] = new SelectList(_context.Users, "Id", "Id", galaxy.CreatorId);
-            ViewData["GalaxyTypes"] = new SelectList(Enum.GetValues(typeof(GalaxyType)));
-            return View(new GalaxyCreateViewModel());
+
+            ViewBag.GalaxyTypes = Enum.GetValues(typeof(GalaxyType))
+                            .Cast<GalaxyType>()
+                            .Select(g => new SelectListItem
+                            {
+                                Value = ((int)g).ToString(),
+                                Text = g.ToString()
+                            });
+            return View(galaxy);
         }
 
         // POST: Galaxies/Edit/5
@@ -151,43 +157,40 @@ namespace AstroFrameWeb.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,GalaxyType,NumberOfStars,DistanceFromEarth,DiscoveredOn,CreatorId")] Galaxy galaxy)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,GalaxyType,NumberOfStars,DistanceFromEarth,DiscoveredOn,ImageUrl,CreatorId")] Galaxy updated)
         {
-            var existingGalaxy = await _context.Galaxies.FindAsync(id);
-            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var isAdmin = User.IsInRole("Admin");
-
-            if (existingGalaxy == null || (!isAdmin && existingGalaxy.CreatorId != currentUserId))
-
-                return Forbid();
-
-            if (id != galaxy.Id)
-            {
+            var galaxy = await _context.Galaxies.FindAsync(id);
+            if (galaxy == null)
                 return NotFound();
-            }
-
-            if (ModelState.IsValid)
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var isAdmin = User.IsInRole("Admin");
+            if (!isAdmin && galaxy.CreatorId != userId)
+                return Forbid();
+            if (!ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(galaxy);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!GalaxyExists(galaxy.Id))
+                ViewBag.GalaxyTypes = Enum.GetValues(typeof(GalaxyType))
+                    .Cast<GalaxyType>()
+                    .Select(g => new SelectListItem
                     {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                        Value = ((int)g).ToString(),
+                        Text = g.ToString()
+                    });
+
+                return View(updated);
             }
-            ViewData["CreatorId"] = new SelectList(_context.Users, "Id", "Id", galaxy.CreatorId);
-            return View(galaxy);
+            galaxy.Name = updated.Name;
+            galaxy.Description = updated.Description;
+            galaxy.GalaxyType = updated.GalaxyType;
+            galaxy.NumberOfStars = updated.NumberOfStars;
+            galaxy.DistanceFromEarth = updated.DistanceFromEarth;
+            galaxy.DiscoveredOn = updated.DiscoveredOn;
+            galaxy.ImageUrl = updated.ImageUrl;
+
+            _context.Entry(galaxy).State = EntityState.Modified;
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Details), new { id = galaxy.Id });
+
         }
 
         // GET: Galaxies/Delete/5
