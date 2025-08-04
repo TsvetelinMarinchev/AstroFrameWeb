@@ -7,9 +7,13 @@ using AstroFrameWeb.Services.Implementations;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using AstroFrameWeb.Data.Models;
 using AstroFrameWeb.Data.Seeds;
+using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
-
+// "," , "." 
+var cultureInfo = new CultureInfo("en-US");
+CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
+CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>

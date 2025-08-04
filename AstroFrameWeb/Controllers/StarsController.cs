@@ -23,29 +23,31 @@ namespace AstroFrameWeb.Controllers
         }
 
         // GET: Stars
-        public IActionResult Index(int index = 0 , string? searchStr = null)
+        public async Task<IActionResult> Index(int index = 0, string? searchStr = null)
         {
             var starsQuery = _context.Stars
                 .Include(s => s.Galaxy)
                 .Include(s => s.StarType)
-                .AsQueryable();
+                .Include(s => s.Owner)
+                .AsNoTracking();
             if (!string.IsNullOrEmpty(searchStr))
             {
                 starsQuery = starsQuery
                     .Where(s => s.Name.Contains(searchStr));
                 index = 0;
             }
-            var stars = starsQuery.ToList();
+            var stars = await starsQuery.ToListAsync();
 
             if (!stars.Any())
             {
-                 return View("Empty");
+                return View("Empty");
             }
             index = Math.Clamp(index, 0, stars.Count - 1);
             var currentStar = stars[index];
 
             ViewBag.Index = index;
             ViewBag.Total = stars.Count;
+            ViewBag.SearchStr = searchStr;
 
             return View(currentStar);
 
@@ -129,8 +131,10 @@ namespace AstroFrameWeb.Controllers
                 return NotFound();
             }
             var star = await _context.Stars
-                .Include(s => s.Owner)
-                .FirstOrDefaultAsync(s => s.Id == id);
+                 .Include(s => s.Galaxy)
+                 .Include(s => s.StarType)
+                 .Include(s => s.Owner)
+                 .FirstOrDefaultAsync(s => s.Id == id);
 
             if (star == null)
             {
@@ -143,6 +147,7 @@ namespace AstroFrameWeb.Controllers
             {
                 return Forbid();
             }
+
             PopulateDropDownsHelper(star.GalaxyId, star.StarTypeId);
             return View(star);
         }
@@ -153,31 +158,40 @@ namespace AstroFrameWeb.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Price,IsPurchased,CreatedOn,OwnerId,GalaxyId,StarTypeId,ImageUrl")] Star star)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Price,GalaxyId,StarTypeId,ImageUrl,OwnerId")] Star updated)
         {
-            var existingStar = await _context.Stars.FindAsync(id);
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                foreach (var err in errors)
+                {
+                    Console.WriteLine("EDIT ERROR: " + err);
+                }
 
+                PopulateDropDownsHelper(updated.GalaxyId, updated.StarTypeId);
+                return View(updated);
+            }
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             var isAdmin = User.IsInRole("Admin");
 
-            if (existingStar == null || (!isAdmin && existingStar.OwnerId != userId)) return Forbid();
-            if (id != star.Id) return NotFound();
+            var star = await _context.Stars.FindAsync(id);
+            if (star == null || (!isAdmin && star.OwnerId != userId))
+                return Forbid();
 
-            if (!ModelState.IsValid)
-            {
-                PopulateDropDownsHelper(star.GalaxyId, star.StarTypeId);
-                return View(star);
-            }
-            _context.Entry(existingStar).CurrentValues.SetValues(star);
+            star.Name = updated.Name;
+            star.Description = updated.Description;
+            star.Price = updated.Price;
+            star.GalaxyId = updated.GalaxyId;
+            star.StarTypeId = updated.StarTypeId;
+            star.ImageUrl = updated.ImageUrl;
+
+            _context.Entry(star).State = EntityState.Modified;
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-
+            return RedirectToAction(nameof(Details), new { id = star.Id });
 
         }
-
-
 
         // GET: Stars/Delete/5
         [Authorize]
@@ -289,10 +303,16 @@ namespace AstroFrameWeb.Controllers
         //helper
         private void PopulateDropDownsHelper(int? galaxyId = null, int? starTypeId = null)
         {
-           var galaxies = _context.Galaxies.AsNoTracking().ToList();
-           var starTypes = _context.StarTypes.AsNoTracking().ToList();
-            ViewBag.Galaxies = new SelectList(_context.Galaxies.AsNoTracking(), "Id", "Name", galaxyId);
-            ViewBag.StarTypes = new SelectList(_context.StarTypes.AsNoTracking(), "Id", "Name", starTypeId);
+
+            //var galaxies = _context.Galaxies.AsNoTracking().ToList();
+            //var starTypes = _context.StarTypes.AsNoTracking().ToList();
+            //ViewBag.Galaxies = new SelectList(_context.Galaxies.AsNoTracking(), "Id", "Name", galaxyId);
+            //ViewBag.StarTypes = new SelectList(_context.StarTypes.AsNoTracking(), "Id", "Name", starTypeId);
+            ViewBag.Galaxies = new SelectList(
+            _context.Galaxies.AsNoTracking().ToList(),"Id", "Name", galaxyId);
+
+            ViewBag.StarTypes = new SelectList(
+                _context.StarTypes.AsNoTracking().ToList(),"Id", "Name", starTypeId);
         }
     }
 }

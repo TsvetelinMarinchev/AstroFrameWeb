@@ -4,57 +4,77 @@
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
 
-<h4>Star</h4>
+<h1>Edit Star</h1>
+
 <hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Price" class="control-label"></label>
-                <input asp-for="Price" class="form-control" />
-                <span asp-validation-for="Price" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="IsPurchased" /> @Html.DisplayNameFor(model => model.IsPurchased)
-                </label>
-            </div>
-            <div class="form-group">
-                <label asp-for="CreatedOn" class="control-label"></label>
-                <input asp-for="CreatedOn" class="form-control" />
-                <span asp-validation-for="CreatedOn" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="OwnerId" class="control-label"></label>
-                <select asp-for="OwnerId" class="form-control" asp-items="ViewBag.OwnerId"></select>
-                <span asp-validation-for="OwnerId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="GalaxyId" class="control-label"></label>
-                <select asp-for="GalaxyId" class="form-control" asp-items="ViewBag.GalaxyId"></select>
-                <span asp-validation-for="GalaxyId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
+<form asp-action="Edit" method="post">
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <ul class="text-danger">
+            @foreach (var entry in ViewData.ModelState)
+            {
+                foreach (var error in entry.Value.Errors)
+                {
+                    <li><strong>@entry.Key</strong>: @error.ErrorMessage</li>
+                }
+            }
+        </ul>
+    }
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger">
+            <strong>formata sydurja greshki.</strong> proveri vsi4ko.
+        </div>
+    }
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="OwnerId" />
 
+    <div class="form-group">
+        <label asp-for="Name"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Description"></label>
+        <input asp-for="Description" class="form-control" />
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Price"></label>
+        <input asp-for="Price" class="form-control" step="0.01" />
+        <span asp-validation-for="Price" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="GalaxyId"></label>
+        <select asp-for="GalaxyId" class="form-control" asp-items="ViewBag.Galaxies"></select>
+        <span asp-validation-for="GalaxyId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="StarTypeId"></label>
+        <select asp-for="StarTypeId" class="form-control" asp-items="ViewBag.StarTypes"></select>
+        <span asp-validation-for="StarTypeId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+
+        <label asp-for="ImageUrl"></label>
+
+        <input asp-for="ImageUrl" class="form-control" />
+
+        <span asp-validation-for="ImageUrl" class="text-danger"></span>
+        Merge change
+        Merge change
+    </div>
+    <input type="submit" value="Save" class="btn btn-primary mt-2" />
+</form>
+<a asp-action="Index" class="btn btn-secondary mt-3">Back to List</a>
 <div>
     <a asp-action="Index">Back to List</a>
 </div>

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -67,6 +68,7 @@ namespace AstroFrameWeb.Data.Models
         public int GalaxyId { get; set; }
 
         [ForeignKey(nameof(GalaxyId))]
+        [ValidateNever]//ne proverqvam dali sa zadadeni samo  id
         public Galaxy Galaxy { get; set; } = null!;
 
         [Comment("List of planets orbiting this star")]
@@ -81,6 +83,7 @@ namespace AstroFrameWeb.Data.Models
         [Range(1, int.MaxValue, ErrorMessage = "Моля, изберете тип звезда")]
         public int StarTypeId { get; set; }
 
+        [ValidateNever]
         public StarType StarType { get; set; } =null!;
     }
 }
