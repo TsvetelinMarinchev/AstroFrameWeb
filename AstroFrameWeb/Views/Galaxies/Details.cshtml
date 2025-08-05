@@ -44,6 +44,13 @@
         <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
         <a asp-action="Index">Back to List</a>
     </div>
+    @if (User.IsInRole("Admin") || Model.CreatorId == User.FindFirstValue(System.Security.Claims.ClaimTypes.NameIdentifier))
+    {
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning me-2">Edit</a>
+        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger"
+           onclick="return confirm('Сигурен ли си, че искаш да изтриеш галактиката?');">Delete</a>
+    }
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
 }
 else
 {

@@ -82,14 +82,18 @@
 </head>
 <body>
     <header>
+        @using Microsoft.AspNetCore.Identity
+        @inject SignInManager<AstroFrameWeb.Data.Models.ApplicationUser> SignInManager
         <nav class="navbar navbar-expand-sm navbar-dark custom-navbar mb-3">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">AstroFrameWeb</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between align-items-center">
+
+                <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between align-items-center" id="mainNavbar">
                     <ul class="navbar-nav me-auto mb-2 mb-sm-0">
                         @if (SignInManager.IsSignedIn(User))
                         {
@@ -112,19 +116,26 @@
                             </ul>
                         </li>
                     </ul>
-                    <partial name="_LoginPartial" />
-                </div>
-                @using Microsoft.AspNetCore.Identity
-                @inject SignInManager<AstroFrameWeb.Data.Models.ApplicationUser> SignInManager
 
-                @if (SignInManager.IsSignedIn(User))
-                {
-                    <div class="text-center my-3">
-                        <a asp-controller="Galaxies" asp-action="Create" class="btn btn-outline-info mx-2">➕ Add Galaxy</a>
-                        <a asp-controller="Planets" asp-action="Create" class="btn btn-outline-success mx-2">➕ Add Planet</a>
-                        <a asp-controller="Stars" asp-action="Create" class="btn btn-outline-warning mx-2">➕ Add Star</a>
+                    <div class="d-flex align-items-center">
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            <span class="text-light me-3">Hello @User.Identity.Name!</span>
+
+                            <a asp-controller="Galaxies" asp-action="Create" class="btn btn-outline-info btn-sm mx-1">➕ Add Galaxy</a>
+                            <a asp-controller="Planets" asp-action="Create" class="btn btn-outline-success btn-sm mx-1">➕ Add Planet</a>
+                            <a asp-controller="Stars" asp-action="Create" class="btn btn-outline-warning btn-sm mx-1">➕ Add Star</a>
+
+                            <form asp-area="Identity" asp-page="/Account/Logout" method="post" class="d-inline mx-2">
+                                <button type="submit" class="btn btn-danger btn-sm">Logout</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <partial name="_LoginPartial" />
+                        }
                     </div>
-                }
+                </div>
             </div>
         </nav>
     </header>

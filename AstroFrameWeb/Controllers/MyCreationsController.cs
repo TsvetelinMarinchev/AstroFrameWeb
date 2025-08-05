@@ -1,4 +1,5 @@
 ﻿using AstroFrameWeb.Data;
+using AstroFrameWeb.Data.Models;
 using AstroFrameWeb.Data.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,22 +20,29 @@ namespace AstroFrameWeb.Controllers
         public  async Task<IActionResult> Index()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var isAdmin = User.IsInRole("Admin");
 
-            var stars = await _context.Stars
-                .Where(s => s.OwnerId == userId)
+
+            IQueryable<Star> starsQuery = _context.Stars
                 .Include(s => s.Galaxy)
-                .Include(s => s.StarType)
-                .ToListAsync();
+                .Include(s => s.StarType);
 
-            var galaxies = await _context.Galaxies
-                .Where(g => g.CreatorId == userId)
-                .ToListAsync();
+            IQueryable<Galaxy> galaxiesQuery = _context.Galaxies.AsQueryable();
 
-            var planets = await _context.Planets
-                .Where(p => p.CreatorId == userId)
+            IQueryable<Planet> planetsQuery = _context.Planets
                 .Include(p => p.Star)
-            .Include(p => p.Galaxy)
-                .ToListAsync();
+                .Include(p => p.Galaxy);
+
+            if (!isAdmin)
+            {
+                starsQuery = starsQuery.Where(s => s.OwnerId == userId);
+                galaxiesQuery = galaxiesQuery.Where(g => g.CreatorId == userId);
+                planetsQuery = planetsQuery.Where(p => p.CreatorId == userId);
+            }
+
+            var stars = await starsQuery.ToListAsync();
+            var galaxies = await galaxiesQuery.ToListAsync();
+            var planets = await planetsQuery.ToListAsync();
 
             var model = new MyCreationViewModel
             {
