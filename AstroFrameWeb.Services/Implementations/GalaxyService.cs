@@ -2,6 +2,7 @@
 using AstroFrameWeb.Data.Models;
 using AstroFrameWeb.Data.Models.ViewModels;
 using AstroFrameWeb.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,6 +49,44 @@ namespace AstroFrameWeb.Services.Implementations
                 CreatorId = userId
             };
             _context.Galaxies.Add(galaxy);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<Galaxy>> GetAllAsync()
+        {
+            return await _context.Galaxies.ToListAsync();
+        }
+        public async Task<Galaxy?> GetByIdAsync(int id)
+        {
+            return await _context.Galaxies
+                .FirstOrDefaultAsync(g => g.Id == id);
+        }
+        public async Task UpdateGalaxyAsync(int id, GalaxyCreateViewModel model)
+        {
+            var galaxy = await _context.Galaxies.FindAsync(id);
+
+            if (galaxy == null)
+                return;
+
+            galaxy.Name = model.Name;
+            galaxy.Description = model.Description;
+            galaxy.GalaxyType = model.GalaxyType;
+            galaxy.NumberOfStars = model.NumberOfStars;
+            galaxy.DistanceFromEarth = model.DistanceFromEarth;
+            galaxy.ImageUrl = model.ImageUrl;
+
+            _context.Galaxies.Update(galaxy);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteGalaxyAsync(int id)
+        {
+            var galaxy = await _context.Galaxies.FindAsync(id);
+
+            if (galaxy == null)
+                return;
+
+            _context.Galaxies.Remove(galaxy);
             await _context.SaveChangesAsync();
         }
     }
