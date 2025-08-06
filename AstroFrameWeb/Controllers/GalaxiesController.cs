@@ -102,23 +102,41 @@ namespace AstroFrameWeb.Controllers
         public async Task<IActionResult> Create(GalaxyCreateViewModel model)
         {
             if (!ModelState.IsValid)
+            {
+                ViewBag.GalaxyTypes = Enum.GetValues(typeof(GalaxyType))
+                    .Cast<GalaxyType>()
+                    .Select(g => new SelectListItem
+                    {
+                        Value = ((int)g).ToString(),
+                        Text = g.ToString()
+                    });
                 return View(model);
+            }
 
             var galaxy = new Galaxy
             {
                 Name = model.Name,
                 Description = model.Description,
-                NumberOfStars = model.NumberOfStars,
-                DistanceFromEarth = model.DistanceFromEarth,
                 GalaxyType = model.GalaxyType,
+                NumberOfStars = model.NumberOfStars,
+                DistanceFromEarth = model.DistanceFromEarth,              
                 ImageUrl = model.ImageUrl,
                 DiscoveredOn = DateTime.UtcNow,
                 DiscoveredAgo = "Billion years ago",
                 CreatorId = User.FindFirstValue(ClaimTypes.NameIdentifier)
             };
-            _context.Galaxies.Add(galaxy);
-            await _context.SaveChangesAsync();
-            return RedirectToAction("Index");
+            try
+            {
+                _context.Galaxies.Add(galaxy);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Something went wrong while saving. Please try again.");
+                return View(model);
+            }
+
+            return RedirectToAction("Details", new { id = galaxy.Id });
         }
 
         // GET: Galaxies/Edit/5

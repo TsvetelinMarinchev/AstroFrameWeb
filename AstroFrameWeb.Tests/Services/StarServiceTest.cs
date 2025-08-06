@@ -9,20 +9,34 @@ using System.Text;
 using System.Threading.Tasks;
 using AstroFrameWeb.Data.Models;
 using AstroFrameWeb.Data.Enums;
+using AutoMapper;
+using AstroFrameWeb.Services.Mapping;
+
+
 
 namespace AstroFrameWeb.Tests.Services
 {
     public class StarServiceTest
     {
+
+        private IMapper GetMapper()
+        {
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile<AutoMapperProfile>();
+            });
+
+            return new Mapper(config);
+        }
         [Fact]
         public async Task CreateStarAsyncShouldAddStarToDatabaseWhenModelIsValid()
         {
             var options = new DbContextOptionsBuilder<ApplicationDbContext>()
                 .UseInMemoryDatabase("Create_Valid_Star")
                 .Options;
-
             using var context = new ApplicationDbContext(options);
-            var service = new StarService(context);
+            var mapper = GetMapper();
+            var service = new StarService(context, mapper);
 
             var model = new StarCreateViewModel
             {
@@ -48,7 +62,8 @@ namespace AstroFrameWeb.Tests.Services
                 .Options;
 
             using var context = new ApplicationDbContext(options);
-            var service = new StarService(context);
+            var mapper = GetMapper();
+            var service = new StarService(context, mapper);
 
             var model = new StarCreateViewModel
             {
@@ -74,6 +89,8 @@ namespace AstroFrameWeb.Tests.Services
                 .Options;
 
             using var context = new ApplicationDbContext(options);
+            var mapper = GetMapper();
+            var service = new StarService(context, mapper);
             var galaxy = new Galaxy { Name = "Milky Way", Description = "Test galaxy", GalaxyType = GalaxyType.Spiral };
             var starType = new StarType { Name = "G-type", Description = "Yellow dwarf" };
 
@@ -104,7 +121,7 @@ namespace AstroFrameWeb.Tests.Services
             );
             await context.SaveChangesAsync();
 
-            var service = new StarService(context);
+            
             var result = await service.GetAllAsync();
 
             Assert.Equal(2, result.Count());
@@ -120,7 +137,8 @@ namespace AstroFrameWeb.Tests.Services
                 .Options;
 
             using var context = new ApplicationDbContext(options);
-       
+            var mapper = GetMapper();
+            var service = new StarService(context, mapper);
             var galaxy = new Galaxy { Name = "Milky Way", Description = "Test galaxy", GalaxyType = GalaxyType.Spiral };
             var starType = new StarType { Name = "G-type", Description = "Yellow dwarf" };
 
@@ -133,15 +151,13 @@ namespace AstroFrameWeb.Tests.Services
                 Name = "Vega",
                 Description = "Bright star",
                 Price = 300,
-                GalaxyId = 1,
-                StarTypeId = 1,
+                GalaxyId = galaxy.Id,
+                StarTypeId = starType.Id,
                 ImageUrl = "https://vega.com"
             };
 
             context.Stars.Add(star);
             await context.SaveChangesAsync();
-
-            var service = new StarService(context);
             var result = await service.GetByIdAsync(star.Id);
 
             Assert.NotNull(result);
@@ -156,7 +172,8 @@ namespace AstroFrameWeb.Tests.Services
                 .Options;
 
             using var context = new ApplicationDbContext(options);
-            var service = new StarService(context);
+            var mapper = GetMapper();
+            var service = new StarService(context, mapper);
 
             var result = await service.GetByIdAsync(999);
             Assert.Null(result);
@@ -171,6 +188,8 @@ namespace AstroFrameWeb.Tests.Services
                 .Options;
 
             using var context = new ApplicationDbContext(options);
+            var mapper = GetMapper();
+            var service = new StarService(context, mapper);
 
             var star = new Star
             {
@@ -184,8 +203,6 @@ namespace AstroFrameWeb.Tests.Services
 
             context.Stars.Add(star);
             await context.SaveChangesAsync();
-
-            var service = new StarService(context);
 
             var updatedModel = new StarCreateViewModel
             {
@@ -214,6 +231,8 @@ namespace AstroFrameWeb.Tests.Services
                 .Options;
 
             using var context = new ApplicationDbContext(options);
+            var mapper = GetMapper();
+            var service = new StarService(context, mapper);
 
             var star = new Star
             {
@@ -227,8 +246,6 @@ namespace AstroFrameWeb.Tests.Services
 
             context.Stars.Add(star);
             await context.SaveChangesAsync();
-
-            var service = new StarService(context);
             await service.DeleteStarAsync(star.Id);
 
             var deleted = await context.Stars.FindAsync(star.Id);

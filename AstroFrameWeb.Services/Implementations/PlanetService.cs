@@ -9,42 +9,37 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 
 namespace AstroFrameWeb.Services.Implementations
 {
     public class PlanetService : IPlanetService
     {
         private readonly ApplicationDbContext _context;
-        public PlanetService(ApplicationDbContext context)
+        private readonly IMapper _mapper;
+        public PlanetService(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
         public async Task<IEnumerable<PlanetViewModel>> GetAllAsync()
         {
-            return await _context.Planets
+            var planets = await _context.Planets
                 .Include(p => p.Galaxy)
                 .Include(p => p.Star)
-                .Select(p => new PlanetViewModel
-                {
-                    Id = p.Id,
-                    Name = p.Name,
-                    Description = p.Description,
-                    Mass = p.Mass,
-                    Radius = p.Radius,
-                    DistanceFromEarth = p.DistanceFromEarth,
-                    GalaxyName = p.Galaxy != null ? p.Galaxy.Name : "Unknown",
-                    StarName = p.Star != null ? p.Star.Name : "Unknown",
-                    ImageUrl = p.ImageUrl
-                })
-                .ToListAsync();
+                .ToListAsync(); 
+
+            return _mapper.Map<IEnumerable<PlanetViewModel>>(planets);
         }
 
-        public async Task<Planet?> GetByIdAsync(int id)
+        public async Task<PlanetViewModel?> GetByIdAsync(int id)
         {
-            return await _context.Planets
+            var planet =  await _context.Planets
                 .Include(p => p.Galaxy)
                 .Include(p => p.Star)
                 .FirstOrDefaultAsync(p => p.Id == id);
+
+            return planet == null ? null : _mapper.Map<PlanetViewModel>(planet);
         }
 
         public async Task CreatePlanetAsync(PlanetCreateViewModel model, string creatorId)
@@ -58,20 +53,10 @@ namespace AstroFrameWeb.Services.Implementations
                 return;
             }
 
-            var planet = new Planet
-            {
-                Name = model.Name,
-                Description = model.Description,
-                Mass = model.Mass,
-                Radius = model.Radius,
-                DistanceFromEarth = model.DistanceFromEarth,
-                ImageUrl = model.ImageUrl,
-                GalaxyId = model.GalaxyId,
-                StarId = model.StarId,
-                CreatorId = creatorId,
-                DiscoveredOn = DateTime.UtcNow,
-                DiscoveredAgo = "Unknown"
-            };
+            var planet = _mapper.Map<Planet>(model);
+            planet.CreatorId = creatorId;
+            planet.DiscoveredOn = DateTime.UtcNow;
+            planet.DiscoveredAgo = "Unknown";
 
             _context.Planets.Add(planet);
             await _context.SaveChangesAsync();
@@ -80,15 +65,15 @@ namespace AstroFrameWeb.Services.Implementations
         {
             var planet = await _context.Planets.FindAsync(id);
             if (planet == null) return;
-
-            planet.Name = model.Name;
-            planet.Description = model.Description;
-            planet.Mass = model.Mass;
-            planet.Radius = model.Radius;
-            planet.DistanceFromEarth = model.DistanceFromEarth;
-            planet.ImageUrl = model.ImageUrl;
-            planet.GalaxyId = model.GalaxyId;
-            planet.StarId = model.StarId;
+            _mapper.Map(model, planet);//
+            //planet.Name = model.Name;
+            //planet.Description = model.Description;
+            //planet.Mass = model.Mass;
+            //planet.Radius = model.Radius;
+            //planet.DistanceFromEarth = model.DistanceFromEarth;
+            //planet.ImageUrl = model.ImageUrl;
+            //planet.GalaxyId = model.GalaxyId;
+            //planet.StarId = model.StarId;
 
             await _context.SaveChangesAsync();
         }

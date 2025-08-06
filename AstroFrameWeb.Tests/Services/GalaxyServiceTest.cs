@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+//using System.Linq;
+//using System.Threading.Tasks;
 using AstroFrameWeb.Data;
 using AstroFrameWeb.Data.Enums;
 using AstroFrameWeb.Data.Models;
@@ -10,10 +8,21 @@ using AstroFrameWeb.Data.Models.ViewModels;
 using AstroFrameWeb.Services.Implementations;
 using Microsoft.EntityFrameworkCore;
 
+using AstroFrameWeb.Services.Mapping;
+using AutoMapper;
+
 namespace AstroFrameWeb.Tests.Services
 {
     public class GalaxyServiceTest
     {
+        private IMapper GetMapper()
+        {
+            var config = new MapperConfiguration(cfg =>
+            {
+               cfg.AddProfile<AutoMapperProfile>();
+            });
+           return new Mapper(config);
+        }
 
         [Fact]
         public async Task CreateGalaxyAsyncShouldAddGalaxyToDatabase()
@@ -22,7 +31,8 @@ namespace AstroFrameWeb.Tests.Services
                .UseInMemoryDatabase(databaseName: "TestGalaxyDb")
                .Options;
             var context = new ApplicationDbContext(options);
-            var galaxyService = new GalaxyService(context);
+            var mapper = GetMapper();
+            var galaxyService = new GalaxyService(context, mapper);
 
             var model = new GalaxyCreateViewModel
             {
@@ -53,7 +63,8 @@ namespace AstroFrameWeb.Tests.Services
 
 
             var context = new ApplicationDbContext(options);
-            var galaxyService = new GalaxyService(context);
+            var mapper = GetMapper();
+            var galaxyService = new GalaxyService(context, mapper);
 
             var model = new GalaxyCreateViewModel
             {
@@ -78,7 +89,8 @@ namespace AstroFrameWeb.Tests.Services
                            .UseInMemoryDatabase("StarsInvalid")
                            .Options;
             var context = new ApplicationDbContext(options);
-            var galaxyService = new GalaxyService(context);
+            var mapper = GetMapper();
+            var galaxyService = new GalaxyService(context, mapper);
 
             var model = new GalaxyCreateViewModel
             {
@@ -104,7 +116,8 @@ namespace AstroFrameWeb.Tests.Services
                        .Options;
 
             var context = new ApplicationDbContext(options);
-            var galaxyService = new GalaxyService(context);
+            var mapper = GetMapper();
+            var galaxyService = new GalaxyService(context, mapper);
 
             var model = new GalaxyCreateViewModel
             {
@@ -130,7 +143,8 @@ namespace AstroFrameWeb.Tests.Services
                       .Options;
 
             var context = new ApplicationDbContext(options);
-            var galaxyService = new GalaxyService(context);
+            var mapper = GetMapper();
+            var galaxyService = new GalaxyService(context, mapper);
 
             var model = new GalaxyCreateViewModel
             {
@@ -155,6 +169,7 @@ namespace AstroFrameWeb.Tests.Services
                 .Options;
 
             using var context = new ApplicationDbContext(options);
+            var mapper = GetMapper();
 
             context.Galaxies.AddRange(
                 new Galaxy { Name = "Milky Way", Description = "Home", GalaxyType = GalaxyType.Spiral, NumberOfStars = 100000, DistanceFromEarth = 0 },
@@ -162,7 +177,7 @@ namespace AstroFrameWeb.Tests.Services
             );
             await context.SaveChangesAsync();
 
-            var service = new GalaxyService(context);
+            var service = new GalaxyService(context, mapper);
 
             var result = await service.GetAllAsync();
 
@@ -180,6 +195,7 @@ namespace AstroFrameWeb.Tests.Services
                 .Options;
 
             using var context = new ApplicationDbContext(options);
+            var mapper = GetMapper();
 
             var galaxy = new Galaxy
             {
@@ -193,7 +209,7 @@ namespace AstroFrameWeb.Tests.Services
             context.Galaxies.Add(galaxy);
             await context.SaveChangesAsync();
 
-            var service = new GalaxyService(context);
+            var service = new GalaxyService(context, mapper);
             var result = await service.GetByIdAsync(galaxy.Id);
 
             Assert.NotNull(result);
@@ -209,8 +225,9 @@ namespace AstroFrameWeb.Tests.Services
                 .Options;
 
             using var context = new ApplicationDbContext(options);
+            var mapper = GetMapper();
 
-            var service = new GalaxyService(context);
+            var service = new GalaxyService(context, mapper);
             var result = await service.GetByIdAsync(999);
             Assert.Null(result);
 
@@ -225,6 +242,7 @@ namespace AstroFrameWeb.Tests.Services
                 .Options;
 
             using var context = new ApplicationDbContext(options);
+            var mapper = GetMapper();
 
             var galaxy = new Galaxy
             {
@@ -239,7 +257,7 @@ namespace AstroFrameWeb.Tests.Services
             context.Galaxies.Add(galaxy);
             await context.SaveChangesAsync();
 
-            var service = new GalaxyService(context);
+            var service = new GalaxyService(context, mapper);
             var updatedModel = new GalaxyCreateViewModel
             {
                 Name = "New Name",
@@ -269,7 +287,8 @@ namespace AstroFrameWeb.Tests.Services
                 .Options;
 
             using var context = new ApplicationDbContext(options);
-            var service = new GalaxyService(context);
+            var mapper = GetMapper();
+            var service = new GalaxyService(context, mapper);
 
             var updatedModel = new GalaxyCreateViewModel
             {
@@ -295,6 +314,8 @@ namespace AstroFrameWeb.Tests.Services
 
             using var context = new ApplicationDbContext(options);
 
+            var mapper = GetMapper();
+
             var galaxy = new Galaxy
             {
                 Name = "Temp Galaxy",
@@ -307,7 +328,7 @@ namespace AstroFrameWeb.Tests.Services
             context.Galaxies.Add(galaxy);
             await context.SaveChangesAsync();
 
-            var service = new GalaxyService(context);
+            var service = new GalaxyService(context, mapper);
             await service.DeleteGalaxyAsync(galaxy.Id);
 
             var deleted = await context.Galaxies.FindAsync(galaxy.Id);

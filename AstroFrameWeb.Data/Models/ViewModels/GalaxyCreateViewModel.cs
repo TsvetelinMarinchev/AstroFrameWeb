@@ -22,8 +22,7 @@ namespace AstroFrameWeb.Data.Models.ViewModels
         public string Description { get; set; } = null!;
 
         [Required]
-        [MaxLength(GalaxyTypeMaxLenghtGalaxyCreateViewModel, ErrorMessage=ErrorMessageGalaxyType)]
-        [MinLength(GalaxyTypeMinLenghtGalaxyCreateViewModel, ErrorMessage=ErrorMessageGalaxyType)]
+        [EnumDataType(typeof(GalaxyType))]
         public GalaxyType GalaxyType { get; set; }
 
         [Required]

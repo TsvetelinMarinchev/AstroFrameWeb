@@ -8,18 +8,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 
 namespace AstroFrameWeb.Services.Implementations
 {
     public class GalaxyService : IGalaxyService
     {
         private readonly ApplicationDbContext _context;
-
-        public GalaxyService(ApplicationDbContext context)
+        private readonly IMapper _mapper;
+        public GalaxyService(ApplicationDbContext context, IMapper mapper)
         {
             this._context = context;
+            _mapper = mapper;
         }
-        public async Task CreateGalaxyAsync(GalaxyCreateViewModel model, string userId)
+        public async Task CreateGalaxyAsync(GalaxyCreateViewModel model, string creatorId)
         {
             if (string.IsNullOrWhiteSpace(model.Name)
                        || model.NumberOfStars <= 0
@@ -28,26 +30,9 @@ namespace AstroFrameWeb.Services.Implementations
             {
                 return;
             }
-                if (string.IsNullOrWhiteSpace(model.Name))
-            {
-                return;
-            }
-            //if (string.IsNullOrWhiteSpace(model.Name) || model.NumberOfStars <= 0)
-            //{
-            //    return;
-            //}
-                var galaxy = new Galaxy
-            {
-                Name = model.Name,
-                Description = model.Description,
-                GalaxyType = model.GalaxyType,
-                NumberOfStars = model.NumberOfStars,
-                DistanceFromEarth = model.DistanceFromEarth,
-                ImageUrl = model.ImageUrl,
-                DiscoveredOn = DateTime.UtcNow,
-                DiscoveredAgo = "Unknown",
-                CreatorId = userId
-            };
+            var galaxy = _mapper.Map<Galaxy>(model);
+            galaxy.CreatorId = creatorId;
+            
             _context.Galaxies.Add(galaxy);
             await _context.SaveChangesAsync();
         }
@@ -65,17 +50,18 @@ namespace AstroFrameWeb.Services.Implementations
         {
             var galaxy = await _context.Galaxies.FindAsync(id);
 
-            if (galaxy == null)
-                return;
+            //if (galaxy == null)
+            //    return;
 
-            galaxy.Name = model.Name;
-            galaxy.Description = model.Description;
-            galaxy.GalaxyType = model.GalaxyType;
-            galaxy.NumberOfStars = model.NumberOfStars;
-            galaxy.DistanceFromEarth = model.DistanceFromEarth;
-            galaxy.ImageUrl = model.ImageUrl;
+            //galaxy.Name = model.Name;
+            //galaxy.Description = model.Description;
+            //galaxy.GalaxyType = model.GalaxyType;
+            //galaxy.NumberOfStars = model.NumberOfStars;
+            //galaxy.DistanceFromEarth = model.DistanceFromEarth;
+            //galaxy.ImageUrl = model.ImageUrl;
 
-            _context.Galaxies.Update(galaxy);
+            //_context.Galaxies.Update(galaxy);
+            _mapper.Map(model, galaxy);
             await _context.SaveChangesAsync();
         }
 
@@ -83,10 +69,9 @@ namespace AstroFrameWeb.Services.Implementations
         {
             var galaxy = await _context.Galaxies.FindAsync(id);
 
-            if (galaxy == null)
-                return;
-
+            if (galaxy == null) return;
             _context.Galaxies.Remove(galaxy);
+
             await _context.SaveChangesAsync();
         }
     }

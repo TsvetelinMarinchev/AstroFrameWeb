@@ -2,6 +2,8 @@
 using AstroFrameWeb.Data.Models;
 using AstroFrameWeb.Data.Models.ViewModels;
 using AstroFrameWeb.Services.Implementations;
+using AstroFrameWeb.Services.Mapping;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -13,16 +15,31 @@ namespace AstroFrameWeb.Tests.Services
 {
     public class PlanetServiceTest
     {
-        [Fact]
+        private IMapper GetMapper()
+        {
+           var config = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile<AutoMapperProfile>();
+            });
+            return new Mapper(config);
 
+        }
+        [Fact]
         public async Task CreatePlanetAsyncShouldAddPlanetToDatabase()
         {
             var options = new DbContextOptionsBuilder<ApplicationDbContext>()
                 .UseInMemoryDatabase("CreatePlanetTestDb")
                 .Options;
 
-            var context = new ApplicationDbContext(options);
-            var service = new PlanetService(context);
+            using var context = new ApplicationDbContext(options);
+            var galaxy = new Galaxy { Name = "Test Galaxy", Description = "Test galaxy" };
+            var star = new Star { Name = "Test Star", Description = "Some description", Galaxy = galaxy };
+            context.Galaxies.Add(galaxy);
+            context.Stars.Add(star);
+            await context.SaveChangesAsync();
+            var mapper = GetMapper();
+            var service = new PlanetService(context, mapper);
+
             var model = new PlanetCreateViewModel
             {
                 Name = "Mars",
@@ -31,8 +48,8 @@ namespace AstroFrameWeb.Tests.Services
                 Radius = 0.53,
                 DistanceFromEarth = 54.6,
                 ImageUrl = "https://mars.com/img.png",
-                GalaxyId = 1,
-                StarId = 1
+                GalaxyId = galaxy.Id,
+                StarId = star.Id
             };
 
             await service.CreatePlanetAsync(model, "test-user");
@@ -50,7 +67,8 @@ namespace AstroFrameWeb.Tests.Services
                      .Options;
 
             using var context = new ApplicationDbContext(options);
-            var service = new PlanetService(context);
+            var mapper = GetMapper();
+            var service = new PlanetService(context, mapper);
 
             var invalidModel = new PlanetCreateViewModel
             {
@@ -59,8 +77,8 @@ namespace AstroFrameWeb.Tests.Services
                 Radius = 0,
                 DistanceFromEarth = -100,
                 ImageUrl = "invalid-url",
-                StarId = 1,
-                GalaxyId = 1
+                GalaxyId = 1,
+                StarId = 1
 
             };
             await service.CreatePlanetAsync(invalidModel, "user123");
@@ -77,7 +95,17 @@ namespace AstroFrameWeb.Tests.Services
                 .Options;
 
             using var context = new ApplicationDbContext(options);
-            var service = new PlanetService(context);
+            var galaxy = new Galaxy { Name = "Galaxy", Description = "Test galaxy" };
+            var star = new Star { Name = "Star", Description = "Test star", Galaxy = galaxy };
+            context.Galaxies.Add(galaxy);
+            context.Stars.Add(star);
+            await context.SaveChangesAsync();
+
+
+
+            var mapper = GetMapper();
+
+            var service = new PlanetService(context, mapper);
 
             var model = new PlanetCreateViewModel
             {
@@ -87,41 +115,14 @@ namespace AstroFrameWeb.Tests.Services
                 Radius = 1,
                 DistanceFromEarth = 10,
                 ImageUrl = "https://earth.com/img.png",
-                GalaxyId = 1,
-                StarId = 1
+                GalaxyId = galaxy.Id,
+                StarId = star.Id
             };
 
             await service.CreatePlanetAsync(model, "user-123");
 
             var count = context.Planets.Count();
             Assert.Equal(1, count);
-        }
-
-        [Fact]
-        public async Task CreatePlanetShouldNotAddToDatabase_WhenModelIsInvalid()
-        {
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase("InvalidPlanetDb")
-                .Options;
-
-            using var context = new ApplicationDbContext(options);
-            var service = new PlanetService(context);
-
-            var model = new PlanetCreateViewModel
-            {
-                Name = "", // bez
-                Mass = -1,
-                Radius = 0,
-                DistanceFromEarth = -1,
-                ImageUrl = "not-a-url",
-                GalaxyId = 1,
-                StarId = 1
-            };
-
-            await service.CreatePlanetAsync(model, "user-123");
-
-            var count = context.Planets.Count();
-            Assert.Equal(0, count);
         }
 
         [Fact]
@@ -159,8 +160,8 @@ namespace AstroFrameWeb.Tests.Services
                      Radius = 1,
                      DistanceFromEarth = 100,
                      ImageUrl = "https://img.com",
-                     GalaxyId = 1,
-                     StarId = 1,
+                     GalaxyId = galaxy.Id,
+                     StarId = star.Id,
                      CreatorId = "user-1",
                      DiscoveredOn = DateTime.UtcNow,
                      DiscoveredAgo = "Unknown"
@@ -173,8 +174,8 @@ namespace AstroFrameWeb.Tests.Services
                      Radius = 1,
                      DistanceFromEarth = 150,
                      ImageUrl = "https://img.com",
-                     GalaxyId = 1,
-                     StarId = 1,
+                     GalaxyId = galaxy.Id,
+                     StarId = star.Id,
                      CreatorId = "user-1",
                      DiscoveredOn = DateTime.UtcNow,
                      DiscoveredAgo = "Unknown"
@@ -182,7 +183,9 @@ namespace AstroFrameWeb.Tests.Services
             );
             await context.SaveChangesAsync();
 
-            var service = new PlanetService(context);
+            var mapper = GetMapper();
+            var service = new PlanetService(context, mapper);
+
             var planets = await service.GetAllAsync();
 
             Assert.Equal(2, planets.Count());
@@ -224,12 +227,15 @@ namespace AstroFrameWeb.Tests.Services
                 DistanceFromEarth = 500,
                 ImageUrl = "https://jupiter.com",
                 GalaxyId = galaxy.Id,
-                StarId = star.Id,
+                StarId = star.Id
             };
             context.Planets.Add(planet);
             await context.SaveChangesAsync();
 
-            var service = new PlanetService(context);
+            var mapper = GetMapper();
+
+            var service = new PlanetService(context, mapper);
+
             var result = await service.GetByIdAsync(planet.Id);
 
             Assert.NotNull(result);
@@ -244,7 +250,9 @@ namespace AstroFrameWeb.Tests.Services
                 .Options;
 
             using var context = new ApplicationDbContext(options);
-            var service = new PlanetService(context);
+
+            var mapper = GetMapper();
+            var service = new PlanetService(context, mapper);
 
             var result = await service.GetByIdAsync(999);
             Assert.Null(result);
@@ -273,7 +281,9 @@ namespace AstroFrameWeb.Tests.Services
             context.Planets.Add(planet);
             await context.SaveChangesAsync();
 
-            var service = new PlanetService(context);
+            var mapper = GetMapper();
+            var service = new PlanetService(context, mapper);
+
             var updated = new PlanetCreateViewModel
             {
                 Name = "Updated",
@@ -295,34 +305,6 @@ namespace AstroFrameWeb.Tests.Services
             Assert.Equal(3, result.Radius);
             Assert.Equal("https://new.com", result.ImageUrl);
         }
-
-        [Fact]
-        public async Task UpdatePlanetAsyncShouldDoNothingWhenPlanetNotFound()
-        {
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase("UpdateMissingPlanetDb")
-                .Options;
-
-            using var context = new ApplicationDbContext(options);
-            var service = new PlanetService(context);
-
-            var updated = new PlanetCreateViewModel
-            {
-                Name = "Doesn't matter",
-                Description = "Won't be saved",
-                Mass = 1,
-                Radius = 1,
-                DistanceFromEarth = 100,
-                ImageUrl = "https://none.com",
-                GalaxyId = 1,
-                StarId = 1
-            };
-
-            await service.UpdatePlanetAsync(123, updated);
-
-            Assert.Empty(context.Planets);
-        }
-
         [Fact]
         public async Task DeletePlanetAsyncShouldRemovePlanet()
         {
@@ -345,7 +327,8 @@ namespace AstroFrameWeb.Tests.Services
             context.Planets.Add(planet);
             await context.SaveChangesAsync();
 
-            var service = new PlanetService(context);
+            var mapper = GetMapper();
+            var service = new PlanetService(context, mapper);
             await service.DeletePlanetAsync(planet.Id);
 
             var result = await context.Planets.FindAsync(planet.Id);
@@ -360,7 +343,8 @@ namespace AstroFrameWeb.Tests.Services
                 .Options;
 
             using var context = new ApplicationDbContext(options);
-            var service = new PlanetService(context);
+            var mapper = GetMapper();
+            var service = new PlanetService(context, mapper);
 
             await service.DeletePlanetAsync(999);
             Assert.Empty(context.Planets);

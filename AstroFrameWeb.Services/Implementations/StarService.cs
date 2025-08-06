@@ -9,15 +9,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 
 namespace AstroFrameWeb.Services.Implementations
 {
     public class StarService : IStarService
     {
         private readonly ApplicationDbContext _context;
-        public StarService(ApplicationDbContext context)
+        private readonly IMapper _mapper;
+        public StarService(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         public  async Task CreateStarAsync(StarCreateViewModel model, string creatorId)
@@ -32,18 +35,10 @@ namespace AstroFrameWeb.Services.Implementations
                 return;
             }
 
-            var star = new Star
-            {
-                Name = model.Name,
-                Description = model.Description,
-                Price = model.Price,
-                GalaxyId = model.GalaxyId,
-                StarTypeId = model.StarTypeId,
-                ImageUrl = model.ImageUrl,
-                DiscoveredAgo = "Unknown",
-                CreatedOn = DateTime.UtcNow,
-                OwnerId = creatorId
-            };
+            var star = _mapper.Map<Star>(model);
+            star.OwnerId = creatorId;
+            star.CreatedOn = DateTime.UtcNow;
+            star.DiscoveredAgo = "Unknown";
 
             _context.Stars.Add(star);
             await _context.SaveChangesAsync();
@@ -60,21 +55,12 @@ namespace AstroFrameWeb.Services.Implementations
 
         public async Task<IEnumerable<StarViewModel>> GetAllAsync()
         {
-            return await _context.Stars
-                .Include(s => s.Galaxy)
-                .Include(s => s.StarType)
-                .Select(s => new StarViewModel
-                {
-                    Id = s.Id,
-                    Name = s.Name,
-                    Description = s.Description,
-                    Price = s.Price,
-                    GalaxyName = s.Galaxy != null ? s.Galaxy.Name : "Unknown",
-                    StarTypeName = s.StarType != null ? s.StarType.Name : "Unknown",
-                    ImageUrl = s.ImageUrl,
-                    DiscoveredAgo = s.DiscoveredAgo ?? "Unknown"
-                })
-                .ToListAsync();
+            var stars = await _context.Stars
+                   .Include(s => s.Galaxy)
+                   .Include(s => s.StarType)
+                   .ToListAsync();
+
+            return _mapper.Map<IEnumerable<StarViewModel>>(stars);
         }
 
          public async Task<StarViewModel?> GetByIdAsync(int id)
@@ -86,17 +72,7 @@ namespace AstroFrameWeb.Services.Implementations
 
             if (star == null) return null;
 
-            return new StarViewModel
-            {
-                Id = star.Id,
-                Name = star.Name,
-                Description = star.Description,
-                Price = star.Price,
-                GalaxyName = star.Galaxy?.Name ?? "Unknown",
-                StarTypeName = star.StarType?.Name ?? "Unknown",
-                ImageUrl = star.ImageUrl,
-                DiscoveredAgo = star.DiscoveredAgo ?? "Unknown"
-            };
+            return _mapper.Map<StarViewModel>(star);
         }
 
         public async Task UpdateStarAsync(int id, StarCreateViewModel model)
@@ -104,12 +80,7 @@ namespace AstroFrameWeb.Services.Implementations
             var star = await _context.Stars.FindAsync(id);
             if (star == null) return;
 
-            star.Name = model.Name;
-            star.Description = model.Description;
-            star.Price = model.Price;
-            star.ImageUrl = model.ImageUrl;
-            star.GalaxyId = model.GalaxyId;
-            star.StarTypeId = model.StarTypeId;
+            _mapper.Map(model, star);
 
             await _context.SaveChangesAsync();
         }
